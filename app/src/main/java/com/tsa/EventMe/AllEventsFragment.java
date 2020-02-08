@@ -12,18 +12,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 
-public class AllEventsFragment extends ListFragment {
+public class AllEventsFragment extends Fragment {
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                inflater.getContext(),
-                android.R.layout.simple_list_item_1,
-                getResources().getStringArray(R.array.AllEvents));
-        setListAdapter(adapter);
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.fragment_all_events, container, false);
     }
 
 }
