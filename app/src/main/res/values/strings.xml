@@ -16,4 +16,8 @@
         <item>Cambridge</item>
         <item>Sebastopol</item>
     </string-array>
+
+
+    <string name="all_tab">All Events</string>
+    <string name="my_tab">My Events</string>
 </resources>
