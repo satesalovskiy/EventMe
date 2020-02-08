@@ -54,7 +54,7 @@ public class SignupActivity extends AppCompatActivity {
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = inputEmail.getText().toString();
+                final String email = inputEmail.getText().toString();
                 String password = inputPassword.getText().toString();
 
                 if (!checkEmailAndPassword(email, password)) {
@@ -73,7 +73,9 @@ public class SignupActivity extends AppCompatActivity {
                             Toast.makeText(SignupActivity.this, "Authentication failed." + task.getException(),
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                            intent.putExtra("email", inputEmail.getText().toString());
+                            startActivity(intent);
                             //finish();
                         }
                     }
@@ -92,21 +94,26 @@ public class SignupActivity extends AppCompatActivity {
         auth.signOut();
     }
 
+
+
     //Create test data and push it to Firebase Database
     public void generateData(View view) {
-        String image1 = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.forbes.com%2Fsites%2Fmarkgreene%2F2019%2F10%2F11%2Fhow-to-buy-a-house-with-10000%2F&psig=AOvVaw21g7PCnoitEJ4uGWGesgSt&ust=1581243678106000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCLCNmfDdwecCFQAAAAAdAAAAABAD";
-        String image2 = "https://www.google.com/url?sa=i&url=http%3A%2F%2Fmediabitch.ru%2Fevent-details%2F&psig=AOvVaw1HpesCLwac2NcLOuTAL8FA&ust=1581246229426000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJDEjLHnwecCFQAAAAAdAAAAABAJ";
+//        String image1 = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.forbes.com%2Fsites%2Fmarkgreene%2F2019%2F10%2F11%2Fhow-to-buy-a-house-with-10000%2F&psig=AOvVaw21g7PCnoitEJ4uGWGesgSt&ust=1581243678106000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCLCNmfDdwecCFQAAAAAdAAAAABAD";
+//        String image2 = "https://www.google.com/url?sa=i&url=http%3A%2F%2Fmediabitch.ru%2Fevent-details%2F&psig=AOvVaw1HpesCLwac2NcLOuTAL8FA&ust=1581246229426000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJDEjLHnwecCFQAAAAAdAAAAABAJ";
+//
+//        Event event1 = new Event(auth.getCurrentUser().getEmail(),"Party in John's house", "Really big night party at John", image1, "Nijniy Novgorod", new GregorianCalendar(2020,2, 7));
+//        Event event2 = new Event(auth.getCurrentUser().getEmail(),"Music concert", "All favourites here! Lets go!", image2, "Nijniy Novgorod", new GregorianCalendar(2020,2, 17));
+//
+//
+//        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+//
+//        DatabaseReference ref = database.getReference();
+//        DatabaseReference usersRef = ref.child("events");
+//
+//        //Need to move from the main thread‼️
+//        usersRef.push().setValue(event1);
+//        usersRef.push().setValue(event2);
 
-        Event event1 = new Event(auth.getCurrentUser().getEmail(),"Party in John's house", "Really big night party at John", image1, "Nijniy Novgorod", new GregorianCalendar(2020,2, 7));
-        Event event2 = new Event(auth.getCurrentUser().getEmail(),"Music concert", "All favourites here! Lets go!", image2, "Nijniy Novgorod", new GregorianCalendar(2020,2, 17));
-
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-        DatabaseReference ref = database.getReference();
-        DatabaseReference usersRef = ref.child("events");
-
-        usersRef.push().setValue(event1);
-        usersRef.push().setValue(event2);
     }
 
     private boolean checkEmailAndPassword(String email, String password) {
