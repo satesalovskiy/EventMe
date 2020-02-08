@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">EventMe</string>
+    <string name="contentLogo">Company logo</string>
+    <string name="email">Enter email</string>
+    <string name="password">Enter password</string>
+    <string name="appName">EventMe</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="btn_link_to_login">Already have an account? Login! </string>
+</resources>
