@@ -50,16 +50,7 @@ public class SignupActivity extends AppCompatActivity {
                 String email = inputEmail.getText().toString();
                 String password = inputPassword.getText().toString();
 
-                if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Please enter password", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (password.length() < 6) {
-                    Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+                if(!checkEmailAndPassword(email, password)){
                     return;
                 }
 
@@ -91,5 +82,25 @@ public class SignupActivity extends AppCompatActivity {
 
     public void logOut(View view) {
         auth.signOut();
+    }
+
+    private boolean checkEmailAndPassword(String email, String password) {
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), "Please enter password", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (password.length() < 6) {
+            Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!email.contains("@")) {
+            Toast.makeText(getApplicationContext(), "Email incorrect", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 }
