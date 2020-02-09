@@ -6,19 +6,16 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 
-
-public class ProfileActivity extends AppCompatActivity {
+public class CreateEvent extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
-
+        setContentView(R.layout.activity_create_event);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Person name");
+        toolbar.setTitle("New Event");
         setSupportActionBar(toolbar);
         ActionBar actionBar = (ActionBar) getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
     }
 }

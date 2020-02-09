@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
@@ -126,6 +127,11 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
+    }
+
+
+    public void onClickFloatingButton(View view) {
+        startActivity(new Intent(this, CreateEvent.class));
     }
 
 }
