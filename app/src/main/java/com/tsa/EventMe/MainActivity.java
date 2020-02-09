@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
     //Create test data and push it to Firebase Database
     public void generateData() {
-        String image1 = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.forbes.com%2Fsites%2Fmarkgreene%2F2019%2F10%2F11%2Fhow-to-buy-a-house-with-10000%2F&psig=AOvVaw21g7PCnoitEJ4uGWGesgSt&ust=1581243678106000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCLCNmfDdwecCFQAAAAAdAAAAABAD";
-        String image2 = "https://www.google.com/url?sa=i&url=http%3A%2F%2Fmediabitch.ru%2Fevent-details%2F&psig=AOvVaw1HpesCLwac2NcLOuTAL8FA&ust=1581246229426000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJDEjLHnwecCFQAAAAAdAAAAABAJ";
+        String image1 = "https://sun9-11.userapi.com/c855216/v855216063/1f6f61/rdRvisvEF6w.jpg";
+        String image2 = "https://sun9-55.userapi.com/c855216/v855216063/1f6f58/QS_eqRlBu-g.jpg";
 
         Event event1 = new Event(auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), "Party in John's house", "Really big night party at John", image1, "Nijniy Novgorod", new GregorianCalendar(2020, 2, 7));
         Event event2 = new Event(auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), "Music concert", "All favourites here! Lets go!", image2, "Nijniy Novgorod", new GregorianCalendar(2020, 2, 17));

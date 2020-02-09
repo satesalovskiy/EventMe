@@ -17,7 +17,11 @@ public class Event {
 
 
 
-    private LinkedList<String> subscribers;
+    //private LinkedList<String> subscribers;
+
+    Event() {
+
+    }
 
     public Event(String ui, String email, String topic, String description, String image, String location, Calendar calendar) {
         this.userEmail = email;
@@ -29,8 +33,8 @@ public class Event {
         this.month = calendar.get(Calendar.MONTH);
         this.day = calendar.get(Calendar.DAY_OF_MONTH);
         this.creationTime = new Date().getTime();
-        this.subscribers = new LinkedList<>();
-        this.subscribers.add(ui);
+//        this.subscribers = new LinkedList<>();
+//        this.subscribers.add(ui);
     }
 
     public String getTopic() {
@@ -105,11 +109,11 @@ public class Event {
         this.userEmail = userEmail;
     }
 
-    public LinkedList<String> getSubscribers() {
-        return subscribers;
-    }
-
-    public void setSubscribers(LinkedList<String> subscribers) {
-        this.subscribers = subscribers;
-    }
+//    public LinkedList<String> getSubscribers() {
+//        return subscribers;
+//    }
+//
+//    public void setSubscribers(LinkedList<String> subscribers) {
+//        this.subscribers = subscribers;
+//    }
 }
