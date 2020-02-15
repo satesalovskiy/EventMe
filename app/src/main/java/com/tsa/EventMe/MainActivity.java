@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 Person newPerson = new Person(possibleEmail);
                 usersRef.push().setValue(newPerson);
                 auth = FirebaseAuth.getInstance();
-                generateData();
+                //generateData();
             }
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

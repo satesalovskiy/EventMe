@@ -18,9 +18,6 @@
             android:name=".ProfileActivity"
             android:label="@string/profile_activity"
             android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
         </activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity">

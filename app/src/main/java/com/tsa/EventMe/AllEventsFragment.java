@@ -71,6 +71,7 @@ public class AllEventsFragment extends Fragment {
 
         FirebaseRecyclerAdapter<Event, EventsViewHolder> adapter =
                 new FirebaseRecyclerAdapter<Event, EventsViewHolder>(option) {
+
                     @Override
                     protected void onBindViewHolder(@NonNull final EventsViewHolder holder, int position, @NonNull Event model) {
 
@@ -88,9 +89,14 @@ public class AllEventsFragment extends Fragment {
                                 holder.eventTopic.setText(eventTopic);
                                 holder.eventDate.setText(eventDate);
 
-                                Picasso.get().load(Uri.parse(eventImage)).placeholder(R.drawable.defaultimage).into(holder.eventImage);
-
-
+                                //Растягивать до определенного размера в Picasso
+                                Picasso.get()
+                                        .load(Uri.parse(eventImage))
+                                        .placeholder(R.drawable.defaultimage)
+                                        .fit()
+                                        .centerCrop()
+                                        .into(holder.eventImage)
+                                        ;
 
                             }
 
@@ -99,7 +105,6 @@ public class AllEventsFragment extends Fragment {
 
                             }
                         });
-
                     }
 
                     @NonNull
@@ -120,9 +125,6 @@ public class AllEventsFragment extends Fragment {
 
         TextView eventDate, eventTopic;
         ImageView eventImage;
-
-
-
 
 
 

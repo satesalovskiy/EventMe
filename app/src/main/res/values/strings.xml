@@ -21,4 +21,13 @@
     <string name="all_tab">All Events</string>
     <string name="my_tab">My Events</string>
 
+
+    <string name="loadImage">Load Image</string>
+    <string name="addDate">Add date</string>
+    <string name="addLocation">Add location</string>
+
+
+    <string name="createEventTopic">What the event is?</string>
+    <string name="createEventDescription">Add some description for your friends </string>
+
 </resources>
