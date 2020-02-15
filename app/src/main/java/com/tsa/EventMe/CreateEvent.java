@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -25,12 +26,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -40,14 +43,16 @@ public class CreateEvent extends AppCompatActivity {
 
     private String topic;
     private String description;
+    private String location;
     public String imageUrl;
     private EditText createTopic;
     private EditText createDescription;
+    private EditText createLocation;
     private Calendar date;
+    private ImageView creatingImage;
     FirebaseAuth auth;
     FirebaseDatabase database;
     DatabaseReference ref;
-
 
 
     private StorageReference mStorageRef;
@@ -57,10 +62,10 @@ public class CreateEvent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         BottomAppBar bottomAppBar = (BottomAppBar) findViewById(R.id.bottom_app_bar);
-        toolbar.setTitle("New Event");
-        setSupportActionBar(toolbar);
+        //toolbar.setTitle("New Event");
+       // setSupportActionBar(toolbar);
         setSupportActionBar(bottomAppBar);
         ActionBar actionBar = (ActionBar) getSupportActionBar();
         //actionBar.setDisplayHomeAsUpEnabled(true);
@@ -69,11 +74,15 @@ public class CreateEvent extends AppCompatActivity {
 
         createTopic = (EditText) findViewById(R.id.createEventTopic);
         createDescription = (EditText) findViewById(R.id.createEventDescription);
+        creatingImage = (ImageView) findViewById(R.id.creatingImage);
+        createLocation = (EditText) findViewById(R.id.createEventLocation);
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
+
+
 
     }
 
@@ -89,10 +98,6 @@ public class CreateEvent extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.load_image:
                 chooseImage();
-                return true;
-            case R.id.add_location:
-                //startActivity(new Intent(this, ProfileActivity.class));
-                Toast.makeText(CreateEvent.this, "Add location", Toast.LENGTH_SHORT);
                 return true;
             case R.id.choose_date:
                 chooseDate();
@@ -167,6 +172,12 @@ public class CreateEvent extends AppCompatActivity {
 
     private void setImageUrl(String url){
         imageUrl = url;
+        Picasso.get()
+                .load(url)
+                .placeholder(R.drawable.defaultimage)
+                .fit()
+                .centerCrop()
+                .into(creatingImage);
     }
 
     private String generateRandomNameForImage(){
@@ -182,13 +193,17 @@ public class CreateEvent extends AppCompatActivity {
     }
 
     public void createEvent(View view) {
-        if(createTopic.getText() == null || createDescription.getText()==null || imageUrl.isEmpty()){
-            Toast.makeText(CreateEvent.this, "Please define topic, description and image",Toast.LENGTH_SHORT).show();
+
+
+        if(createTopic.getText().toString().isEmpty() || createDescription.getText().toString().isEmpty() || imageUrl.isEmpty() || createLocation.getText().toString().isEmpty()){
+            Toast.makeText(CreateEvent.this, "Please define topic, description, location and image",Toast.LENGTH_SHORT).show();
             return;
         }
 
         topic = createTopic.getText().toString();
         description = createDescription.getText().toString();
+        location = createLocation.getText().toString();
+
 
         Event event = new Event(
                 auth.getCurrentUser().getUid(),
@@ -196,7 +211,7 @@ public class CreateEvent extends AppCompatActivity {
                 topic,
                 description,
                 imageUrl,
-                "NijniyNovgorod",
+                location,
                 date);
 
         ref = database.getReference().child("users").child(auth.getCurrentUser().getUid()).child("events");
@@ -205,6 +220,26 @@ public class CreateEvent extends AppCompatActivity {
         allEvents.push().setValue(event);
 
 
+
+        createTopic.setText("");
+        createDescription.setText("");
+        date.clear();
+        imageUrl="";
+        creatingImage.setImageResource(0);
+
+        showSnackBar("Event created");
+
+    }
+
+    private void showSnackBar(String s) {
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinator2), s, Snackbar.LENGTH_LONG);
+        snackbar.setAction("Ok", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(CreateEvent.this, MainActivity.class));
+            }
+        });
+        snackbar.show();
     }
 
 

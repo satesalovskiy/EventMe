@@ -5,40 +5,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/coordinator2"
     tools:context="com.tsa.EventMe.CreateEvent">
 
-    <include
-        layout="@layout/toolvar_main"
-        android:id="@+id/toolbar" />
 
-
-
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingTop="70dp"
-     >
+        android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/createEventTopic"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="23sp"
-            android:gravity="bottom"
-            android:hint="@string/createEventTopic"
-            />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="20dp">
 
-        <EditText
-            android:id="@+id/createEventDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="23sp"
-            android:gravity="bottom"
-            android:hint="@string/createEventDescription"
-            />
-    </LinearLayout>
+            <EditText
+                android:id="@+id/createEventTopic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="bottom"
+                android:hint="@string/createEventTopic"
+                android:paddingTop="20dp"
+                />
 
+            <EditText
+                android:id="@+id/createEventDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="bottom"
+                android:hint="@string/createEventDescription"
+                android:paddingTop="20dp"
+                />
+            <EditText
+                android:id="@+id/createEventLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="bottom"
+                android:hint="@string/createEventLocation"
+                android:paddingTop="20dp"
+                />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:id="@+id/creatingImage"
+                android:contentDescription="Event photo"
+                android:paddingTop="20dp"
+                />
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 
 

@@ -28,6 +28,8 @@
 
 
     <string name="createEventTopic">What the event is?</string>
-    <string name="createEventDescription">Add some description for your friends </string>
+    <string name="createEventDescription">Description</string>
+    <string name="createEventLocation">Location</string>
+
 
 </resources>

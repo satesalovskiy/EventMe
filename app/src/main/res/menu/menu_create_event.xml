@@ -14,10 +14,5 @@
         android:icon="@drawable/baseline_date_range_black_48"
         android:orderInCategory="2"
         app:showAsAction="always"/>
-    <item android:id="@+id/add_location"
-        android:title="@string/addLocation"
-        android:icon="@drawable/baseline_add_location_black_48"
-        android:orderInCategory="3"
-        app:showAsAction="always"/>
 
 </menu>

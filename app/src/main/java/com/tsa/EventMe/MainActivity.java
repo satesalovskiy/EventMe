@@ -41,8 +41,13 @@ public class MainActivity extends AppCompatActivity {
                 DatabaseReference ref = database.getReference();
                 DatabaseReference usersRef = ref.child("users");
                 //DatabaseReference user = usersRef.child(possibleEmail);
+
+
                 Person newPerson = new Person(possibleEmail);
                 usersRef.push().setValue(newPerson);
+
+
+
                 auth = FirebaseAuth.getInstance();
                 //generateData();
             }
@@ -70,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
 
         ref = database.getReference().child("users").child(auth.getCurrentUser().getUid()).child("events");
+
+
         DatabaseReference allEvents = database.getReference().child("events");
         ref.push().setValue(event1);
         ref.push().setValue(event2);
