@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -34,7 +36,8 @@ import java.util.List;
 public class AllEventsFragment extends Fragment {
     private View EventsView;
     private RecyclerView myEventList;
-    private DatabaseReference eventsRef, EVENTSRef;
+    private DatabaseReference EVENTSRef;
+    private Query eventsRef;
     private FirebaseAuth auth;
     private String currentUserId;
 
@@ -45,14 +48,24 @@ public class AllEventsFragment extends Fragment {
         EventsView =  inflater.inflate(R.layout.test, container, false);
 
         myEventList = (RecyclerView) EventsView.findViewById(R.id.events_list);
-        myEventList.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+
+        //=======
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        //=======
+
+        myEventList.setLayoutManager(layoutManager);
 
 
         auth = FirebaseAuth.getInstance();
         currentUserId = auth.getUid();
 
-
+        //Как то так мб?
         eventsRef = FirebaseDatabase.getInstance().getReference().child("events");
+
+
         EVENTSRef = FirebaseDatabase.getInstance().getReference().child("events");
 
 
@@ -88,13 +101,14 @@ public class AllEventsFragment extends Fragment {
 
                                 holder.eventTopic.setText(eventTopic);
                                 holder.eventDate.setText(eventDate);
+                                dataSnapshot.getChildrenCount();
 
-                                //Растягивать до определенного размера в Picasso
+
                                 Picasso.get()
                                         .load(Uri.parse(eventImage))
                                         .placeholder(R.drawable.defaultimage)
                                         .fit()
-                                        .centerCrop()
+                                        .centerInside()
                                         .into(holder.eventImage)
                                         ;
 
