@@ -1,6 +1,7 @@
 package com.tsa.EventMe;
 
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -82,11 +84,24 @@ public class AllEventsFragment extends Fragment {
                 .build();
 
 
-        FirebaseRecyclerAdapter<Event, EventsViewHolder> adapter =
+        final FirebaseRecyclerAdapter<Event, EventsViewHolder> adapter =
                 new FirebaseRecyclerAdapter<Event, EventsViewHolder>(option) {
 
                     @Override
                     protected void onBindViewHolder(@NonNull final EventsViewHolder holder, int position, @NonNull Event model) {
+
+
+                        //=============================
+                        holder.eventImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+
+
+                                startActivity(new Intent(getContext(), ProfileActivity.class));
+                            }
+                        });
+
 
                         String evetnsIDs = getRef(position).getKey();
 

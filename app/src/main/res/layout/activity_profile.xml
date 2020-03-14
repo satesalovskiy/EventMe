@@ -22,8 +22,11 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:src="@drawable/test"
-                android:contentDescription="Jopa"
-                app:layout_collapseMode="parallax" />
+                android:contentDescription="profile image"
+                app:layout_collapseMode="parallax"
+                android:id="@+id/person_image"/>
+
+
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
