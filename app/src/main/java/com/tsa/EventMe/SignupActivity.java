@@ -16,6 +16,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -47,19 +54,10 @@ public class SignupActivity extends AppCompatActivity {
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = inputEmail.getText().toString();
+                final String email = inputEmail.getText().toString();
                 String password = inputPassword.getText().toString();
 
-                if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Please enter password", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (password.length() < 6) {
-                    Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+                if (!checkEmailAndPassword(email, password)) {
                     return;
                 }
 
@@ -75,7 +73,9 @@ public class SignupActivity extends AppCompatActivity {
                             Toast.makeText(SignupActivity.this, "Authentication failed." + task.getException(),
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                            intent.putExtra("email", inputEmail.getText().toString());
+                            startActivity(intent);
                             //finish();
                         }
                     }
@@ -83,6 +83,7 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -91,5 +92,47 @@ public class SignupActivity extends AppCompatActivity {
 
     public void logOut(View view) {
         auth.signOut();
+    }
+
+
+
+    //Create test data and push it to Firebase Database
+    public void generateData(View view) {
+//        String image1 = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.forbes.com%2Fsites%2Fmarkgreene%2F2019%2F10%2F11%2Fhow-to-buy-a-house-with-10000%2F&psig=AOvVaw21g7PCnoitEJ4uGWGesgSt&ust=1581243678106000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCLCNmfDdwecCFQAAAAAdAAAAABAD";
+//        String image2 = "https://www.google.com/url?sa=i&url=http%3A%2F%2Fmediabitch.ru%2Fevent-details%2F&psig=AOvVaw1HpesCLwac2NcLOuTAL8FA&ust=1581246229426000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJDEjLHnwecCFQAAAAAdAAAAABAJ";
+//
+//        Event event1 = new Event(auth.getCurrentUser().getEmail(),"Party in John's house", "Really big night party at John", image1, "Nijniy Novgorod", new GregorianCalendar(2020,2, 7));
+//        Event event2 = new Event(auth.getCurrentUser().getEmail(),"Music concert", "All favourites here! Lets go!", image2, "Nijniy Novgorod", new GregorianCalendar(2020,2, 17));
+//
+//
+//        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+//
+//        DatabaseReference ref = database.getReference();
+//        DatabaseReference usersRef = ref.child("events");
+//
+//        //Need to move from the main thread‼️
+//        usersRef.push().setValue(event1);
+//        usersRef.push().setValue(event2);
+
+    }
+
+    private boolean checkEmailAndPassword(String email, String password) {
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getApplicationContext(), "Please enter email", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getApplicationContext(), "Please enter password", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (password.length() < 6) {
+            Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!email.contains("@")) {
+            Toast.makeText(getApplicationContext(), "Email incorrect", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 }

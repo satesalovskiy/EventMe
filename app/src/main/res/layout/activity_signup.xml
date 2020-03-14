@@ -6,12 +6,16 @@
     android:layout_height="match_parent"
     tools:context="com.tsa.EventMe.SignupActivity"
     android:orientation="vertical">
-
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Generate test data"
+        android:onClick="generateData"/>
     <ImageView
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
+
         android:contentDescription="@string/contentLogo"
         android:src="@drawable/logo"
         android:layout_marginBottom="20dp"
@@ -76,5 +80,6 @@
         android:text="Log out"
         android:onClick="logOut"
         />
+
 
 </LinearLayout>

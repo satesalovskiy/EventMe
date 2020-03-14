@@ -7,4 +7,29 @@
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="btn_link_to_login">Already have an account? Login! </string>
+    <string name="profile_activity">Profile</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="AllEvents">
+        <item>Cambridge</item>
+        <item>Sebastopol</item>
+    </string-array>
+
+
+    <string name="all_tab">All Events</string>
+    <string name="my_tab">My Events</string>
+
+
+    <string name="loadImage">Load Image</string>
+    <string name="addDate">Add date</string>
+    <string name="addLocation">Add location</string>
+
+
+    <string name="createEventTopic">What the event is?</string>
+    <string name="createEventDescription">Description</string>
+    <string name="createEventLocation">Location</string>
+
+
 </resources>
