@@ -205,6 +205,8 @@ public class CreateEvent extends AppCompatActivity {
         location = createLocation.getText().toString();
 
 
+
+
         Event event = new Event(
                 auth.getCurrentUser().getUid(),
                 auth.getCurrentUser().getEmail(),

@@ -93,6 +93,7 @@ public class AllEventsFragment extends Fragment {
 
                         String evetnsIDs = getRef(position).getKey();
 
+
                         EVENTSRef.child(evetnsIDs).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -119,16 +120,21 @@ public class AllEventsFragment extends Fragment {
 
 
                                 final String description = dataSnapshot.child("description").getValue().toString();
+                                final String eventID = dataSnapshot.getRef().getKey();
 
 
                                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
+                                        Toast.makeText(getContext(), eventID, Toast.LENGTH_SHORT).show();
+
                                         Intent detailsIntent = new Intent(getContext(), DetailsActivity.class );
                                         detailsIntent.putExtra("event_photo", eventImage);
                                         detailsIntent.putExtra("event_topic", eventTopic);
                                         detailsIntent.putExtra("event_date", eventDate);
                                         detailsIntent.putExtra("event_description", description);
+                                        detailsIntent.putExtra("event_ref", eventID);
+
                                         startActivity(detailsIntent);
                                     }
                                 });
