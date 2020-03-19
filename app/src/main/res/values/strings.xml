@@ -30,6 +30,7 @@
     <string name="createEventTopic">What the event is?</string>
     <string name="createEventDescription">Description</string>
     <string name="createEventLocation">Location</string>
+    <string name="detailsSubscribe">Subscribe</string>
 
 
 </resources>

@@ -87,31 +87,21 @@ public class AllEventsFragment extends Fragment {
         final FirebaseRecyclerAdapter<Event, EventsViewHolder> adapter =
                 new FirebaseRecyclerAdapter<Event, EventsViewHolder>(option) {
 
+
                     @Override
                     protected void onBindViewHolder(@NonNull final EventsViewHolder holder, int position, @NonNull Event model) {
-
-
-                        //=============================
-                        holder.eventImage.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-
-
-                                startActivity(new Intent(getContext(), ProfileActivity.class));
-                            }
-                        });
-
 
                         String evetnsIDs = getRef(position).getKey();
 
                         EVENTSRef.child(evetnsIDs).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                String eventImage = dataSnapshot.child("image").getValue().toString();
-                                String eventTopic = dataSnapshot.child("topic").getValue().toString();
-                                String eventDate = dataSnapshot.child("day").getValue().toString() +
-                                        dataSnapshot.child("month").getValue().toString() +
+
+
+                                final String eventImage = dataSnapshot.child("image").getValue().toString();
+                                final String eventTopic = dataSnapshot.child("topic").getValue().toString();
+                                final String eventDate = dataSnapshot.child("day").getValue().toString() +"."+
+                                        dataSnapshot.child("month").getValue().toString() + "."+
                                         dataSnapshot.child("year").getValue().toString();
 
                                 holder.eventTopic.setText(eventTopic);
@@ -126,6 +116,22 @@ public class AllEventsFragment extends Fragment {
                                         .centerInside()
                                         .into(holder.eventImage)
                                         ;
+
+
+                                final String description = dataSnapshot.child("description").getValue().toString();
+
+
+                                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent detailsIntent = new Intent(getContext(), DetailsActivity.class );
+                                        detailsIntent.putExtra("event_photo", eventImage);
+                                        detailsIntent.putExtra("event_topic", eventTopic);
+                                        detailsIntent.putExtra("event_date", eventDate);
+                                        detailsIntent.putExtra("event_description", description);
+                                        startActivity(detailsIntent);
+                                    }
+                                });
 
                             }
 
@@ -146,6 +152,7 @@ public class AllEventsFragment extends Fragment {
                 };
 
         myEventList.setAdapter(adapter);
+
         adapter.startListening();
 
     }

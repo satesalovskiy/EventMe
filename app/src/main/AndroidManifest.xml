@@ -11,15 +11,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ProfileSettings"
-            android:parentActivityName=".ProfileActivity"></activity>
+        <activity android:name=".DetailsActivity"
+            android:parentActivityName=".MainActivity"></activity>
+        <activity
+            android:name=".ProfileSettings"
+            android:parentActivityName=".ProfileActivity" />
         <activity
             android:name=".CreateEvent"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".ProfileActivity"
             android:label="@string/profile_activity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity">
             <intent-filter>
