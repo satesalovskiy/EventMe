@@ -18,14 +18,24 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:contentScrim="?attr/colorPrimary">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/test"
-                android:contentDescription="profile image"
-                app:layout_collapseMode="parallax"
-                android:id="@+id/person_image"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/test"
+                    android:contentDescription="profile image"
+                    app:layout_collapseMode="parallax"
+                    android:id="@+id/person_image"/>
+
+
+
+            </RelativeLayout>
+
+
 
 
 
@@ -52,6 +62,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding = "16dp" >
+
+
+            <EditText
+                android:id="@+id/edit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
 
 

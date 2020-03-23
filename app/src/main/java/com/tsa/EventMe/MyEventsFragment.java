@@ -45,7 +45,7 @@ public class MyEventsFragment extends Fragment {
         EventsView =  inflater.inflate(R.layout.test, container, false);
         myEventList = (RecyclerView) EventsView.findViewById(R.id.events_list);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-        gridLayoutManager.setReverseLayout(true);
+        gridLayoutManager.setReverseLayout(false);
        // gridLayoutManager.setStackFromEnd(true);
         int spanCount = 3; // 3 columns
         int spacing = 50; // 50px

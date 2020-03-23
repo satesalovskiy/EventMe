@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         Toast.makeText(this, auth.getUid(), Toast.LENGTH_LONG).show();
         if (getIntent().getExtras() != null) {
+
             String possibleEmail = getIntent().getExtras().getString("email");
             if (possibleEmail != null) {
                 //Create new Person
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 auth = FirebaseAuth.getInstance();
+                
                 //generateData();
             }
         }
