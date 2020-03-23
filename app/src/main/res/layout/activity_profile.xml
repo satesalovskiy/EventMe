@@ -64,10 +64,29 @@
             android:padding = "16dp" >
 
 
-            <EditText
-                android:id="@+id/edit_text"
+            <TextView
+                android:id="@+id/user_status"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="Your status"/>
+            <TextView
+                android:id="@+id/user_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your email"/>
+
+            <TextView
+                android:id="@+id/user_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your phone number"/>
+
+            <Button
+                android:id="@+id/button_user_edit_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit"
+                android:onClick="EditUserInfo"/>
 
 
 

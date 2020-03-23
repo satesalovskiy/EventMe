@@ -3,20 +3,26 @@ package com.tsa.EventMe;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -34,19 +40,36 @@ import java.io.ByteArrayOutputStream;
 
 
 public class ProfileActivity extends AppCompatActivity {
+    public static final String APP_PREFERENCES = "myprefs";
 
     private ImageView personImage;
-    ImageView editImage;
-    EditText editText;
-    int CHOOSE_IMAGE_CODE = 111;
+
+
+    private String name;
+    private String phone;
+    private String email;
+    private String status;
+    private Toolbar toolbar;
+
+    private TextView userName;
+    private TextView userStatus;
+    private TextView userEmail;
+    private TextView userPhone;
+
+    private ImageView editImage;
+    private EditText editText;
+    private int CHOOSE_IMAGE_CODE = 111;
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         toolbar.setTitle("Person name");
+
         setSupportActionBar(toolbar);
         ActionBar actionBar = (ActionBar) getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -54,18 +77,22 @@ public class ProfileActivity extends AppCompatActivity {
         personImage = (ImageView) findViewById(R.id.person_image);
         personImage.setImageResource(R.drawable.defaultimage);
 
+        userStatus = findViewById(R.id.user_status);
+        userEmail = findViewById(R.id.user_email);
+        userPhone = findViewById(R.id.user_phone);
 
-        editText = findViewById(R.id.edit_text);
 
-       // editImage = findViewById(R.id.change_image_button);
+        // editText = findViewById(R.id.edit_text);
 
-        editText.setFocusable(View.FOCUSABLE);
-        editText.setFocusableInTouchMode(true);
-        editText.setInputType(InputType.TYPE_NULL);
+        // editImage = findViewById(R.id.change_image_button);
+//
+//        editText.setFocusable(View.FOCUSABLE);
+//        editText.setFocusableInTouchMode(true);
+//        editText.setInputType(InputType.TYPE_NULL);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user != null) {
-            if(user.getPhotoUrl() != null) {
+        if (user != null) {
+            if (user.getPhotoUrl() != null) {
                 Picasso.get()
                         .load(user.getPhotoUrl())
                         .placeholder(R.drawable.defaultimage)
@@ -76,6 +103,81 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
 
+        SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, 0);
+        if(sharedPreferences.contains("newUserName")) {
+            toolbar.setTitle(sharedPreferences.getString("newUserName", ""));
+        }
+        if(sharedPreferences.contains("newUserEmail")) {
+            userEmail.setText(sharedPreferences.getString("newUserEmail", ""));
+        }
+        if(sharedPreferences.contains("newUserStatus")) {
+            userStatus.setText(sharedPreferences.getString("newUserStatus", ""));
+        }
+        if(sharedPreferences.contains("newUserPhone")) {
+            userPhone.setText(sharedPreferences.getString("newUserPhone", ""));
+        }
+    }
+
+    public void EditUserInfo(View view) {
+
+        AlertDialog.Builder  builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View view1 = inflater.inflate(R.layout.edit_user_profile_info, null);
+
+        builder.setView(view1)
+                .setPositiveButton(R.string.editTextPositiveButton, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        EditText editTextName = view1.findViewById(R.id.edit_text_name);
+                        EditText editTextStatus = view1.findViewById(R.id.edit_text_status);
+                        EditText editTextEmail = view1.findViewById(R.id.edit_text_email);
+                        EditText editTextPhone = view1.findViewById(R.id.edit_text_phone);
+
+                        String name = editTextName.getText().toString();
+                        String status = editTextStatus.getText().toString();
+                        String email = editTextEmail.getText().toString();
+                        String phone = editTextPhone.getText().toString();
+                        ConfirmChanges(name, status, email, phone);
+                    }
+                })
+                .setNegativeButton(R.string.editTextNegativeButton, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+
+        dialog = builder.create();
+        dialog.show();
+    }
+
+    private void ConfirmChanges(String name, String status, String email, String phone) {
+
+        if(!name.isEmpty()){
+            toolbar.setTitle(name);
+            WriteInPrefs("newUserName", name);
+        }
+        if(!status.isEmpty()){
+            userStatus.setText(status);
+            WriteInPrefs("newUserStatus", status);
+        }
+        if(!email.isEmpty()){
+            userEmail.setText(email);
+            WriteInPrefs("newUserEmail", email);
+        }
+        if(!phone.isEmpty()){
+            userPhone.setText(phone);
+            WriteInPrefs("newUserPhone", phone);
+        }
+
+    }
+
+    private void WriteInPrefs(String key, String value) {
+        SharedPreferences sharedPreferences = this.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.apply();
     }
 
 

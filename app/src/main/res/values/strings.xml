@@ -33,4 +33,19 @@
     <string name="detailsSubscribe">Subscribe</string>
 
 
+    <string name="editTextPositiveButton">Confirm</string>
+    <string name="editTextNegativeButton">Cancel</string>
+
+
+    <string name="editTextHingName">Name</string>
+    <string name="editTextHingStatus">Status</string>
+    <string name="editTextHingEmail">Email</string>
+    <string name="editTextHingPhone">Phone</string>
+
+
+
+
+
+
+
 </resources>
