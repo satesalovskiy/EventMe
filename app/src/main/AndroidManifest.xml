@@ -11,8 +11,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DetailsActivity"
-            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".SplashActivity"
+            android:theme="@style/AppTheme.Launcher">
+
+        </activity>
+        <activity
+            android:name=".DetailsActivity"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".ProfileSettings"
             android:parentActivityName=".ProfileActivity" />
@@ -23,23 +28,18 @@
             android:name=".ProfileActivity"
             android:label="@string/profile_activity"
             android:parentActivityName=".MainActivity" />
-
         <activity android:name=".LoginActivity" />
-
         <activity
             android:name=".SignupActivity"
             android:theme="@style/AppTheme.Launcher">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-
-
-
-        <activity
-            android:name=".MainActivity"/>
+        <activity android:name=".MainActivity" />
 
         <service
             android:name=".MyFBService"
@@ -49,10 +49,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".ReminderBroadcast"/>
-
-
-
+        <receiver android:name=".ReminderBroadcast" />
     </application>
 
 </manifest>
