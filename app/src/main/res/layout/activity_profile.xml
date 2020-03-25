@@ -88,6 +88,12 @@
                 android:text="Edit"
                 android:onClick="EditUserInfo"/>
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/post_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Notifications"/>
+
 
 
 

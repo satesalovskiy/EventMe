@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
@@ -20,16 +21,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -61,6 +66,9 @@ public class ProfileActivity extends AppCompatActivity {
     private int CHOOSE_IMAGE_CODE = 111;
     private AlertDialog dialog;
 
+    private SwitchCompat postSwitch;
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +88,8 @@ public class ProfileActivity extends AppCompatActivity {
         userStatus = findViewById(R.id.user_status);
         userEmail = findViewById(R.id.user_email);
         userPhone = findViewById(R.id.user_phone);
+        postSwitch = findViewById(R.id.post_switch);
+
 
 
         // editText = findViewById(R.id.edit_text);
@@ -103,7 +113,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
 
-        SharedPreferences sharedPreferences = getSharedPreferences(APP_PREFERENCES, 0);
+        sharedPreferences = getSharedPreferences(APP_PREFERENCES, 0);
+
+        setSwitchListener();
         if(sharedPreferences.contains("newUserName")) {
             toolbar.setTitle(sharedPreferences.getString("newUserName", ""));
         }
@@ -116,6 +128,72 @@ public class ProfileActivity extends AppCompatActivity {
         if(sharedPreferences.contains("newUserPhone")) {
             userPhone.setText(sharedPreferences.getString("newUserPhone", ""));
         }
+    }
+
+
+
+    private void setSwitchListener() {
+
+        boolean isPostEnabled = sharedPreferences.getBoolean("Notifications", false);
+
+        if(isPostEnabled) {
+            postSwitch.setChecked(true);
+        } else {
+            postSwitch.setChecked(false);
+        }
+
+
+        postSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                SharedPreferences.Editor edit = sharedPreferences.edit();
+                edit.putBoolean("Notifications", b);
+                edit.apply();
+
+
+                if(b){
+                    subscribePostNotifications();
+                } else {
+                    unsubscribePostNotifications();
+                }
+            }
+        });
+    }
+
+    private void unsubscribePostNotifications() {
+
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("Notifications")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "You will not receive post notifications";
+
+                        if(!task.isSuccessful()) {
+                            msg = "UnSubscription failed";
+                        }
+
+                        Toast.makeText(ProfileActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void subscribePostNotifications() {
+
+        FirebaseMessaging.getInstance().subscribeToTopic("Notifications")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "You will receive post notifications";
+
+                        if(!task.isSuccessful()) {
+                            msg = "Subscription failed";
+                        }
+
+                        Toast.makeText(ProfileActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+        
     }
 
     public void EditUserInfo(View view) {

@@ -32,6 +32,19 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
+
+        <service
+            android:name=".MyFBService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".ReminderBroadcast"/>
+
+
+
     </application>
 
 </manifest>

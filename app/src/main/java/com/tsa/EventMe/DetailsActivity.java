@@ -3,15 +3,24 @@ package com.tsa.EventMe;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,8 +33,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -35,7 +47,10 @@ public class DetailsActivity extends AppCompatActivity {
 
     private String recievedTopic;
     private String recievedDescription;
-    private String recievedDate;
+    private String recievedDay;
+    private String recievedMonth;
+    private String recievedYear;
+
     private String recievedImage;
     private String recievedRef;
     private FirebaseAuth auth;
@@ -51,6 +66,10 @@ public class DetailsActivity extends AppCompatActivity {
     private ImageView star;
     FirebaseDatabase database;
 
+    private Button switchCompat;
+    private SharedPreferences sharedPreferences;
+
+
 
 
     String test;
@@ -61,13 +80,25 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
 
+        createNotificationChanel();
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
 
         recievedImage = getIntent().getExtras().getString("event_photo");
-        recievedDate = getIntent().getExtras().getString("event_date");
+
+        recievedDay = getIntent().getExtras().getString("event_day");
+        recievedMonth = getIntent().getExtras().getString("event_month");
+        recievedYear = getIntent().getExtras().getString("event_year");
+
+
+
         recievedTopic = getIntent().getExtras().getString("event_topic");
         recievedRef = getIntent().getExtras().getString("event_ref");
+
+
+
         toolbar.setTitle("Details");
         setSupportActionBar(toolbar);
         ActionBar actionBar = (ActionBar) getSupportActionBar();
@@ -78,11 +109,21 @@ public class DetailsActivity extends AppCompatActivity {
         date = new GregorianCalendar();
         date = Calendar.getInstance();
 
+
+        date.set(Calendar.YEAR, Integer.parseInt(recievedYear));
+        date.set(Calendar.MONTH, Integer.parseInt(recievedMonth));
+        date.set(Calendar.DAY_OF_MONTH, Integer.parseInt(recievedDay));
+
         details_image = findViewById(R.id.details_image);
         details_topic = findViewById(R.id.details_topic);
         details_date = findViewById(R.id.details_date);
         details_description = findViewById(R.id.details_description);
         star = findViewById(R.id.star);
+
+        sharedPreferences = getSharedPreferences(ProfileActivity.APP_PREFERENCES, MODE_PRIVATE);
+
+        switchCompat = findViewById(R.id.remind_switch);
+        setSwitchListener();
         //Toast.makeText(this, getIntent().getExtras().getString("event_topic"), Toast.LENGTH_SHORT).show();
 
         Picasso.get()
@@ -92,7 +133,8 @@ public class DetailsActivity extends AppCompatActivity {
                 .centerInside()
                 .into(details_image);
         details_topic.setText(recievedTopic);
-        details_date.setText(recievedDate);
+        String datee = recievedDay + "-" + recievedMonth + "-" + recievedYear;
+        details_date.setText(datee);
         details_description.setText(recievedDescription);
 
 
@@ -102,6 +144,79 @@ public class DetailsActivity extends AppCompatActivity {
 
 
 
+    }
+
+
+    private void setSwitchListener() {
+
+//        boolean isRemindReq = sharedPreferences.getBoolean("Remind", false);
+//
+//        if(isRemindReq) {
+//            switchCompat.setChecked(true);
+//        } else {
+//            switchCompat.setChecked(false);
+//        }
+
+        switchCompat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Remind();
+            }
+        });
+
+//        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//
+//                SharedPreferences.Editor edit = sharedPreferences.edit();
+//                edit.putBoolean("Remind", b);
+//                edit.apply();
+//
+//
+//                if(b){
+//                    Remind();
+//                } else {
+//                    DeleteRemind();
+//                }
+//            }
+//        });
+    }
+
+
+    private void Remind() {
+
+        Toast.makeText(this, "You will get a notification", Toast.LENGTH_SHORT).show();
+
+        String myFormat = "dd/MM/yy" ;
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat , Locale. getDefault ()) ;
+
+        Intent intent = new Intent(this, ReminderBroadcast.class);
+        intent.putExtra("Topic", recievedTopic);
+        intent.putExtra("Description", recievedDescription);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Date date12 = date.getTime();
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, date12.getTime(), pendingIntent);
+    }
+
+    private void DeleteRemind() {
+
+    }
+
+    private void createNotificationChanel() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            CharSequence name = "MyReminderChanel";
+            String description = "Chanel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("remindMe", name, importance);
+            channel.setDescription(description);
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+
+
+        }
     }
 
 
@@ -127,7 +242,7 @@ public class DetailsActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                             if(dataSnapshot.child("topic").getValue() != null) {
-                                test = "Jopa";
+                                test = ")))";
                             }
 
                             test = dataSnapshot.child("topic").toString();
@@ -162,6 +277,9 @@ public class DetailsActivity extends AppCompatActivity {
 //                    Log.d("MYTAG", test);
 //
 //                }
+
+
+
 
 
 

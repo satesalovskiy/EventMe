@@ -84,6 +84,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"/>
+
+
+            <Button
+                android:id="@+id/remind_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Remind"/>
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

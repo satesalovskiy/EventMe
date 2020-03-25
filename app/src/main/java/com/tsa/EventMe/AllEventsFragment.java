@@ -105,6 +105,10 @@ public class AllEventsFragment extends Fragment {
                                         dataSnapshot.child("month").getValue().toString() + "."+
                                         dataSnapshot.child("year").getValue().toString();
 
+                                final String eventDay = dataSnapshot.child("day").getValue().toString();
+                                final String eventMonth = dataSnapshot.child("month").getValue().toString();
+                                final String eventYear = dataSnapshot.child("year").getValue().toString();
+
                                 holder.eventTopic.setText(eventTopic);
                                 holder.eventDate.setText(eventDate);
                                 dataSnapshot.getChildrenCount();
@@ -131,7 +135,10 @@ public class AllEventsFragment extends Fragment {
                                         Intent detailsIntent = new Intent(getContext(), DetailsActivity.class );
                                         detailsIntent.putExtra("event_photo", eventImage);
                                         detailsIntent.putExtra("event_topic", eventTopic);
-                                        detailsIntent.putExtra("event_date", eventDate);
+                                        detailsIntent.putExtra("event_day", eventDay);
+                                        detailsIntent.putExtra("event_month", eventMonth);
+                                        detailsIntent.putExtra("event_year", eventYear);
+
                                         detailsIntent.putExtra("event_description", description);
                                         detailsIntent.putExtra("event_ref", eventID);
 
