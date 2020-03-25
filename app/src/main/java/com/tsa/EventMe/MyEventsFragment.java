@@ -1,6 +1,8 @@
 package com.tsa.EventMe;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,15 +13,19 @@ import androidx.fragment.app.ListFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,6 +33,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 
@@ -81,49 +89,72 @@ public class MyEventsFragment extends Fragment {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                                if(dataSnapshot.child("topic").getValue() != null) {
+                                    final String eventImage = dataSnapshot.child("image").getValue().toString();
+                                    final String eventTopic = dataSnapshot.child("topic").getValue().toString();
+                                    final String eventDate = dataSnapshot.child("day").getValue().toString() +"."+
+                                            dataSnapshot.child("month").getValue().toString() + "."+
+                                            dataSnapshot.child("year").getValue().toString();
 
-                                final String eventImage = dataSnapshot.child("image").getValue().toString();
-                                final String eventTopic = dataSnapshot.child("topic").getValue().toString();
-                                final String eventDate = dataSnapshot.child("day").getValue().toString() +"."+
-                                        dataSnapshot.child("month").getValue().toString() + "."+
-                                        dataSnapshot.child("year").getValue().toString();
-
-                                final String eventDay = dataSnapshot.child("day").getValue().toString();
-                                final String eventMonth = dataSnapshot.child("month").getValue().toString();
-                                final String eventYear = dataSnapshot.child("year").getValue().toString();
-
-
-                                holder.eventTopic.setText(eventTopic);
-                                holder.eventDate.setText(eventDate);
-                                dataSnapshot.getChildrenCount();
+                                    final String eventDay = dataSnapshot.child("day").getValue().toString();
+                                    final String eventMonth = dataSnapshot.child("month").getValue().toString();
+                                    final String eventYear = dataSnapshot.child("year").getValue().toString();
 
 
-                                Picasso.get()
-                                        .load(Uri.parse(eventImage))
-                                        .placeholder(R.drawable.defaultimage)
-                                        .fit()
-                                        .centerInside()
-                                        .into(holder.eventImage)
-                                ;
+                                    holder.eventTopic.setText(eventTopic);
+                                    holder.eventDate.setText(eventDate);
+                                    dataSnapshot.getChildrenCount();
 
 
-                                final String description = dataSnapshot.child("description").getValue().toString();
+                                    Picasso.get()
+                                            .load(Uri.parse(eventImage))
+                                            .placeholder(R.drawable.defaultimage)
+                                            .fit()
+                                            .centerInside()
+                                            .into(holder.eventImage)
+                                    ;
 
 
-                                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Intent detailsIntent = new Intent(getContext(), DetailsActivity.class );
-                                        detailsIntent.putExtra("event_photo", eventImage);
-                                        detailsIntent.putExtra("event_topic", eventTopic);
-                                        detailsIntent.putExtra("event_day", eventDay);
-                                        detailsIntent.putExtra("event_month", eventMonth);
-                                        detailsIntent.putExtra("event_year", eventYear);
+                                    final String description = dataSnapshot.child("description").getValue().toString();
 
-                                        detailsIntent.putExtra("event_description", description);
-                                        startActivity(detailsIntent);
-                                    }
-                                });
+                                    final String eventID = dataSnapshot.getRef().getKey();
+
+                                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent detailsIntent = new Intent(getContext(), DetailsActivity.class );
+                                            detailsIntent.putExtra("event_photo", eventImage);
+                                            detailsIntent.putExtra("event_topic", eventTopic);
+                                            detailsIntent.putExtra("event_day", eventDay);
+                                            detailsIntent.putExtra("event_month", eventMonth);
+                                            detailsIntent.putExtra("event_year", eventYear);
+                                            detailsIntent.putExtra("event_description", description);
+                                            detailsIntent.putExtra("event_ref", eventID);
+
+                                            startActivity(detailsIntent);
+
+                                        }
+                                        public void onItemLongClick (View view, int position) {
+
+                                            String currentTitle = getItem(position).getTopic();
+                                            String currentImage = getItem(position).getImage();
+                                            showDeleteDataDialog(currentTitle, currentImage);
+
+
+                                        }
+                                    });
+
+
+                                    holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                                        @Override
+                                        public boolean onLongClick(View view) {
+
+                                            showDeleteDataDialog(eventTopic, eventImage);
+                                            return true;
+                                        }
+                                    });
+                                }
+
 
                             }
 
@@ -146,6 +177,73 @@ public class MyEventsFragment extends Fragment {
         myEventList.setAdapter(adapter);
 
         adapter.startListening();
+
+    }
+
+
+    private void showDeleteDataDialog(final String currentTitle, final String currentImage) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Delete");
+        builder.setMessage("Are you sure to delete this post?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                Query mQuery = EVENTSRef.orderByChild("topic").equalTo(currentTitle);
+                mQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot ds: dataSnapshot.getChildren()) {
+                            ds.getRef().removeValue();
+                        }
+                        Toast.makeText(getContext(), "Post deleted", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                Query mQuery2 = FirebaseDatabase.getInstance().getReference().child("events").orderByChild("topic").equalTo(currentTitle);
+                mQuery2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot ds: dataSnapshot.getChildren()) {
+                            ds.getRef().removeValue();
+                        }
+                        Toast.makeText(getContext(), "Post deleted", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+                StorageReference mPictureRef = FirebaseStorage.getInstance().getReferenceFromUrl(currentImage);
+                mPictureRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                });
+
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+
+        builder.create().show();
 
     }
 

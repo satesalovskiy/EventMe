@@ -139,6 +139,7 @@ public class DetailsActivity extends AppCompatActivity {
 
 
         EVENTSRef = FirebaseDatabase.getInstance().getReference().child("events").child(recievedRef);
+
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
 

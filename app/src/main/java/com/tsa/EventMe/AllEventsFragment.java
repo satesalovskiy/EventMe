@@ -1,6 +1,9 @@
 package com.tsa.EventMe;
 
 
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,6 +45,7 @@ public class AllEventsFragment extends Fragment {
     private Query eventsRef;
     private FirebaseAuth auth;
     private String currentUserId;
+    FirebaseRecyclerAdapter<Event, EventsViewHolder> adapter;
 
 
     @Override
@@ -84,12 +88,12 @@ public class AllEventsFragment extends Fragment {
                 .build();
 
 
-        final FirebaseRecyclerAdapter<Event, EventsViewHolder> adapter =
+        adapter =
                 new FirebaseRecyclerAdapter<Event, EventsViewHolder>(option) {
 
 
                     @Override
-                    protected void onBindViewHolder(@NonNull final EventsViewHolder holder, int position, @NonNull Event model) {
+                    protected void onBindViewHolder(@NonNull final EventsViewHolder holder, final int position, @NonNull Event model) {
 
                         String evetnsIDs = getRef(position).getKey();
 
@@ -99,52 +103,60 @@ public class AllEventsFragment extends Fragment {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
 
-                                final String eventImage = dataSnapshot.child("image").getValue().toString();
-                                final String eventTopic = dataSnapshot.child("topic").getValue().toString();
-                                final String eventDate = dataSnapshot.child("day").getValue().toString() +"."+
-                                        dataSnapshot.child("month").getValue().toString() + "."+
-                                        dataSnapshot.child("year").getValue().toString();
+                                if(dataSnapshot.child("topic").getValue() != null) {
+                                    final String eventImage = dataSnapshot.child("image").getValue().toString();
+                                    final String eventTopic = dataSnapshot.child("topic").getValue().toString();
+                                    final String eventDate = dataSnapshot.child("day").getValue().toString() +"."+
+                                            dataSnapshot.child("month").getValue().toString() + "."+
+                                            dataSnapshot.child("year").getValue().toString();
 
-                                final String eventDay = dataSnapshot.child("day").getValue().toString();
-                                final String eventMonth = dataSnapshot.child("month").getValue().toString();
-                                final String eventYear = dataSnapshot.child("year").getValue().toString();
+                                    final String eventDay = dataSnapshot.child("day").getValue().toString();
+                                    final String eventMonth = dataSnapshot.child("month").getValue().toString();
+                                    final String eventYear = dataSnapshot.child("year").getValue().toString();
 
-                                holder.eventTopic.setText(eventTopic);
-                                holder.eventDate.setText(eventDate);
-                                dataSnapshot.getChildrenCount();
-
-
-                                Picasso.get()
-                                        .load(Uri.parse(eventImage))
-                                        .placeholder(R.drawable.defaultimage)
-                                        .fit()
-                                        .centerInside()
-                                        .into(holder.eventImage)
-                                        ;
+                                    holder.eventTopic.setText(eventTopic);
+                                    holder.eventDate.setText(eventDate);
+                                    dataSnapshot.getChildrenCount();
 
 
-                                final String description = dataSnapshot.child("description").getValue().toString();
-                                final String eventID = dataSnapshot.getRef().getKey();
+                                    Picasso.get()
+                                            .load(Uri.parse(eventImage))
+                                            .placeholder(R.drawable.defaultimage)
+                                            .fit()
+                                            .centerInside()
+                                            .into(holder.eventImage)
+                                    ;
 
 
-                                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Toast.makeText(getContext(), eventID, Toast.LENGTH_SHORT).show();
+                                    final String description = dataSnapshot.child("description").getValue().toString();
+                                    final String eventID = dataSnapshot.getRef().getKey();
 
-                                        Intent detailsIntent = new Intent(getContext(), DetailsActivity.class );
-                                        detailsIntent.putExtra("event_photo", eventImage);
-                                        detailsIntent.putExtra("event_topic", eventTopic);
-                                        detailsIntent.putExtra("event_day", eventDay);
-                                        detailsIntent.putExtra("event_month", eventMonth);
-                                        detailsIntent.putExtra("event_year", eventYear);
 
-                                        detailsIntent.putExtra("event_description", description);
-                                        detailsIntent.putExtra("event_ref", eventID);
+                                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Toast.makeText(getContext(), eventID, Toast.LENGTH_SHORT).show();
 
-                                        startActivity(detailsIntent);
-                                    }
-                                });
+                                            Intent detailsIntent = new Intent(getContext(), DetailsActivity.class );
+                                            detailsIntent.putExtra("event_photo", eventImage);
+                                            detailsIntent.putExtra("event_topic", eventTopic);
+                                            detailsIntent.putExtra("event_day", eventDay);
+                                            detailsIntent.putExtra("event_month", eventMonth);
+                                            detailsIntent.putExtra("event_year", eventYear);
+
+                                            detailsIntent.putExtra("event_description", description);
+                                            detailsIntent.putExtra("event_ref", eventID);
+
+                                            startActivity(detailsIntent);
+                                        }
+
+
+
+
+                                    });
+                                }
+
+
 
                             }
 
@@ -160,15 +172,23 @@ public class AllEventsFragment extends Fragment {
                     public EventsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
                         EventsViewHolder viewHolder = new EventsViewHolder(view);
+
+
+
                         return  viewHolder;
                     }
                 };
 
         myEventList.setAdapter(adapter);
 
+
+
+
         adapter.startListening();
 
     }
+
+
 
     public static class EventsViewHolder extends RecyclerView.ViewHolder {
 
