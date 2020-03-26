@@ -14,5 +14,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp" />
+        android:layout_marginTop="0dp"
+        android:background="@color/background_recycler"/>
 </RelativeLayout>

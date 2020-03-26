@@ -254,7 +254,16 @@ public class DetailsActivity extends AppCompatActivity {
                         date.set(Calendar.MONTH, Integer.parseInt(dataSnapshot.child("month").getValue().toString()));
                         date.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dataSnapshot.child("day").getValue().toString()));
 
+                        String userImageUrl;
+                        if(auth.getCurrentUser().getPhotoUrl() != null) {
+                            userImageUrl = auth.getCurrentUser().getPhotoUrl().toString();
+                        } else {
+                            userImageUrl = "https://vk.com/im?peers=103103918_83744687&sel=44403965&z=photo44403965_457242394%2Fmail1152840";
+                        }
+
+
                         Event event = new Event(
+                                userImageUrl,
                                 auth.getCurrentUser().getUid(),
                                 auth.getCurrentUser().getEmail(),
                                 dataSnapshot.child("topic").getValue().toString(),

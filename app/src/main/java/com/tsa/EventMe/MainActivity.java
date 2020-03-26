@@ -67,26 +67,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //Create test data and push it to Firebase Database
-    public void generateData() {
-        String image1 = "https://sun9-11.userapi.com/c855216/v855216063/1f6f61/rdRvisvEF6w.jpg";
-        String image2 = "https://sun9-55.userapi.com/c855216/v855216063/1f6f58/QS_eqRlBu-g.jpg";
-
-        Event event1 = new Event(auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), "Party in John's house", "Really big night party at John", image1, "Nijniy Novgorod", new GregorianCalendar(2020, 2, 7));
-        Event event2 = new Event(auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), "Music concert", "All favourites here! Lets go!", image2, "Nijniy Novgorod", new GregorianCalendar(2020, 2, 17));
-
-        database = FirebaseDatabase.getInstance();
-
-        ref = database.getReference().child("users").child(auth.getCurrentUser().getUid()).child("events");
-
-
-        DatabaseReference allEvents = database.getReference().child("events");
-        ref.push().setValue(event1);
-        ref.push().setValue(event2);
-        allEvents.push().setValue(event1);
-        allEvents.push().setValue(event2);
-
-    }
+//    //Create test data and push it to Firebase Database
+//    public void generateData() {
+//        String image1 = "https://sun9-11.userapi.com/c855216/v855216063/1f6f61/rdRvisvEF6w.jpg";
+//        String image2 = "https://sun9-55.userapi.com/c855216/v855216063/1f6f58/QS_eqRlBu-g.jpg";
+//
+//        Event event1 = new Event(auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), "Party in John's house", "Really big night party at John", image1, "Nijniy Novgorod", new GregorianCalendar(2020, 2, 7));
+//        Event event2 = new Event(auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), "Music concert", "All favourites here! Lets go!", image2, "Nijniy Novgorod", new GregorianCalendar(2020, 2, 17));
+//
+//        database = FirebaseDatabase.getInstance();
+//
+//        ref = database.getReference().child("users").child(auth.getCurrentUser().getUid()).child("events");
+//
+//
+//        DatabaseReference allEvents = database.getReference().child("events");
+//        ref.push().setValue(event1);
+//        ref.push().setValue(event2);
+//        allEvents.push().setValue(event1);
+//        allEvents.push().setValue(event2);
+//
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -15,6 +15,16 @@ public class Event {
     private String location;
     private String userEmail;
 
+    public String getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(String userImage) {
+        this.userImage = userImage;
+    }
+
+    private String userImage;
+
 
 
     //private LinkedList<String> subscribers;
@@ -23,7 +33,7 @@ public class Event {
 
     }
 
-    public Event(String ui, String email, String topic, String description, String image, String location, Calendar calendar) {
+    public Event(String userImage, String ui, String email, String topic, String description, String image, String location, Calendar calendar) {
         this.userEmail = email;
         this.topic = topic;
         this.description = description;
@@ -33,6 +43,7 @@ public class Event {
         this.month = calendar.get(Calendar.MONTH);
         this.day = calendar.get(Calendar.DAY_OF_MONTH);
         this.creationTime = new Date().getTime();
+        this.userImage = userImage;
 //        this.subscribers = new LinkedList<>();
 //        this.subscribers.add(ui);
     }

@@ -37,6 +37,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class MyEventsFragment extends Fragment {
     private View EventsView;
@@ -90,11 +92,12 @@ public class MyEventsFragment extends Fragment {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                                 if(dataSnapshot.child("topic").getValue() != null) {
+
+
+                                   // final Object eventCreatorPhoto = dataSnapshot.child("userImage").getValue();
+                                   // final String eventCreatorEmail = dataSnapshot.child("userEmail").getValue().toString();
                                     final String eventImage = dataSnapshot.child("image").getValue().toString();
                                     final String eventTopic = dataSnapshot.child("topic").getValue().toString();
-                                    final String eventDate = dataSnapshot.child("day").getValue().toString() +"."+
-                                            dataSnapshot.child("month").getValue().toString() + "."+
-                                            dataSnapshot.child("year").getValue().toString();
 
                                     final String eventDay = dataSnapshot.child("day").getValue().toString();
                                     final String eventMonth = dataSnapshot.child("month").getValue().toString();
@@ -102,8 +105,26 @@ public class MyEventsFragment extends Fragment {
 
 
                                     holder.eventTopic.setText(eventTopic);
-                                    holder.eventDate.setText(eventDate);
+                                   //holder.eventCreatorEmail.setText(eventCreatorEmail);
+
+
                                     dataSnapshot.getChildrenCount();
+
+//                                    if(eventCreatorPhoto == null) {
+//                                        Picasso.get()
+//                                                .load(R.drawable.defaultimage)
+//                                                .placeholder(R.drawable.defaultimage)
+//                                                .fit()
+//                                                .centerInside()
+//                                                .into(holder.eventCreatorPhoto);
+//                                    } else {
+//                                        Picasso.get()
+//                                                .load(Uri.parse(eventCreatorPhoto.toString()))
+//                                                .placeholder(R.drawable.defaultimage)
+//                                                .fit()
+//                                                .centerInside()
+//                                                .into(holder.eventCreatorPhoto);
+//                                    }
 
 
                                     Picasso.get()
@@ -168,7 +189,7 @@ public class MyEventsFragment extends Fragment {
                     @NonNull
                     @Override
                     public AllEventsFragment.EventsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+                        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.one_more_list_item, parent, false);
                         AllEventsFragment.EventsViewHolder viewHolder = new AllEventsFragment.EventsViewHolder(view);
                         return  viewHolder;
                     }
@@ -249,14 +270,16 @@ public class MyEventsFragment extends Fragment {
 
     public static class EventsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView eventDate, eventTopic;
+        TextView eventTopic, eventCreatorEmail;
         ImageView eventImage;
+        CircleImageView eventCreatorPhoto;
 
         public EventsViewHolder(@NonNull View itemView) {
             super(itemView);
-            eventDate = (TextView) itemView.findViewById(R.id.eventDate);
             eventTopic = (TextView) itemView.findViewById(R.id.eventTopic);
             eventImage = (ImageView) itemView.findViewById(R.id.eventImage);
+            //eventCreatorEmail = itemView.findViewById(R.id.eventCreatorEmail);
+            //eventCreatorPhoto = itemView.findViewById(R.id.eventCreatorPhoto);
         }
     }
 

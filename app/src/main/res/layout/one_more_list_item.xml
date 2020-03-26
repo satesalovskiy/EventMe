@@ -9,13 +9,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+       <!-- <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_marginTop="8dp"
                 android:layout_marginLeft="8dp"
                 android:id="@+id/eventCreatorPhoto"
@@ -33,9 +32,7 @@
                 android:textSize="15sp"
                 android:layout_marginLeft="8dp"/>
 
-        </LinearLayout>
-
-
+        </LinearLayout> -->
 
 
 
@@ -47,30 +44,19 @@
             android:scaleType="centerInside"
             android:layout_marginTop="8dp"
             android:background="@drawable/recycler_item_shape"
-             />
+            />
+
 
         <TextView
             android:id="@+id/eventTopic"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textSize="25sp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/black_text"/>
-
-        <TextView
-            android:id="@+id/eventDate"
+            android:textColor="@color/black_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView"
             android:textSize="20sp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:textColor="@color/black_text"/>
-
-
+            android:layout_marginTop="8dp"/>
 
     </LinearLayout>
 

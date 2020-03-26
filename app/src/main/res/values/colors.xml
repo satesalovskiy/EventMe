@@ -6,4 +6,10 @@
     <color name="yellow">#FFEB3B</color>
     <color name="white_text">#FFFFFF</color>
     <color name="grey_hint">#6F6F6F</color>
+    <color name="background_recycler">#F1F1F1</color>
+    <color name="background_item">#FFFFFF</color>
+    <color name="black_text">#000000</color>
+
+
+
 </resources>

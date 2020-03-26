@@ -44,6 +44,8 @@
 
         <EditText
             android:id="@+id/email"
+            android:textColor="@color/white_text"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/email"
@@ -55,6 +57,7 @@
 
         <EditText
             android:id="@+id/password"
+            android:textColor="@color/white_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/password"
@@ -124,7 +127,6 @@
             android:layout_height="wrap_content"
             android:text="Log out"
             android:onClick="logOut"
-            android:visibility="gone"
             />
 
 

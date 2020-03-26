@@ -219,10 +219,16 @@ public class CreateEvent extends AppCompatActivity {
         description = createDescription.getText().toString();
         location = createLocation.getText().toString();
 
-
+        String userImageUrl;
+        if(auth.getCurrentUser().getPhotoUrl() != null) {
+            userImageUrl = auth.getCurrentUser().getPhotoUrl().toString();
+        } else {
+            userImageUrl = "https://vk.com/im?peers=103103918_83744687&sel=44403965&z=photo44403965_457242394%2Fmail1152840";
+        }
 
 
         Event event = new Event(
+                userImageUrl,
                 auth.getCurrentUser().getUid(),
                 auth.getCurrentUser().getEmail(),
                 topic,

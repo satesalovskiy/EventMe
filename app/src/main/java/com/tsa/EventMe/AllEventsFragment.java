@@ -37,6 +37,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class AllEventsFragment extends Fragment {
     private View EventsView;
@@ -62,6 +64,7 @@ public class AllEventsFragment extends Fragment {
         layoutManager.setStackFromEnd(true);
         //=======
 
+        myEventList.addItemDecoration(new SpacesItemDecoration(20));
         myEventList.setLayoutManager(layoutManager);
 
 
@@ -104,6 +107,9 @@ public class AllEventsFragment extends Fragment {
 
 
                                 if(dataSnapshot.child("topic").getValue() != null) {
+
+                                    final Object eventCreatorPhoto = dataSnapshot.child("userImage").getValue();
+                                    final String eventCreatorEmail = dataSnapshot.child("userEmail").getValue().toString();
                                     final String eventImage = dataSnapshot.child("image").getValue().toString();
                                     final String eventTopic = dataSnapshot.child("topic").getValue().toString();
                                     final String eventDate = dataSnapshot.child("day").getValue().toString() +"."+
@@ -116,7 +122,26 @@ public class AllEventsFragment extends Fragment {
 
                                     holder.eventTopic.setText(eventTopic);
                                     holder.eventDate.setText(eventDate);
+                                    holder.eventCreatorEmail.setText(eventCreatorEmail);
+
                                     dataSnapshot.getChildrenCount();
+
+
+                                    if(eventCreatorPhoto == null) {
+                                        Picasso.get()
+                                                .load(R.drawable.defaultimage)
+                                                .placeholder(R.drawable.defaultimage)
+                                                .fit()
+                                                .centerInside()
+                                                .into(holder.eventCreatorPhoto);
+                                    } else {
+                                        Picasso.get()
+                                                .load(Uri.parse(eventCreatorPhoto.toString()))
+                                                .placeholder(R.drawable.defaultimage)
+                                                .fit()
+                                                .centerInside()
+                                                .into(holder.eventCreatorPhoto);
+                                    }
 
 
                                     Picasso.get()
@@ -124,8 +149,7 @@ public class AllEventsFragment extends Fragment {
                                             .placeholder(R.drawable.defaultimage)
                                             .fit()
                                             .centerInside()
-                                            .into(holder.eventImage)
-                                    ;
+                                            .into(holder.eventImage);
 
 
                                     final String description = dataSnapshot.child("description").getValue().toString();
@@ -143,6 +167,7 @@ public class AllEventsFragment extends Fragment {
                                             detailsIntent.putExtra("event_day", eventDay);
                                             detailsIntent.putExtra("event_month", eventMonth);
                                             detailsIntent.putExtra("event_year", eventYear);
+                                            detailsIntent.putExtra("event_creator_email", eventCreatorEmail);
 
                                             detailsIntent.putExtra("event_description", description);
                                             detailsIntent.putExtra("event_ref", eventID);
@@ -192,8 +217,10 @@ public class AllEventsFragment extends Fragment {
 
     public static class EventsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView eventDate, eventTopic;
+        TextView eventDate, eventTopic, eventCreatorEmail;
         ImageView eventImage;
+        CircleImageView eventCreatorPhoto;
+
 
 
 
@@ -203,6 +230,8 @@ public class AllEventsFragment extends Fragment {
             eventDate = (TextView) itemView.findViewById(R.id.eventDate);
             eventTopic = (TextView) itemView.findViewById(R.id.eventTopic);
             eventImage = (ImageView) itemView.findViewById(R.id.eventImage);
+            eventCreatorEmail = itemView.findViewById(R.id.eventCreatorEmail);
+            eventCreatorPhoto = itemView.findViewById(R.id.eventCreatorPhoto);
 
 
         }
