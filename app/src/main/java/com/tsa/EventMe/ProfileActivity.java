@@ -12,15 +12,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,15 +37,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 
 public class ProfileActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES = "myprefs";
+    public static int NUMBER_OF_ALL_EVENTS = 0;
 
     private ImageView personImage;
-
 
     private String name;
     private String phone;
@@ -60,6 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView userStatus;
     private TextView userEmail;
     private TextView userPhone;
+    private TextView userAllEventsCount;
 
     private ImageView editImage;
     private EditText editText;
@@ -77,6 +72,7 @@ public class ProfileActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         toolbar.setTitle("Person name");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white_text));
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = (ActionBar) getSupportActionBar();
@@ -89,6 +85,7 @@ public class ProfileActivity extends AppCompatActivity {
         userEmail = findViewById(R.id.user_email);
         userPhone = findViewById(R.id.user_phone);
         postSwitch = findViewById(R.id.post_switch);
+        userAllEventsCount = findViewById(R.id.user_number_of_events);
 
 
 
@@ -116,6 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, 0);
 
         setSwitchListener();
+
         if(sharedPreferences.contains("newUserName")) {
             toolbar.setTitle(sharedPreferences.getString("newUserName", ""));
         }
@@ -127,6 +125,12 @@ public class ProfileActivity extends AppCompatActivity {
         }
         if(sharedPreferences.contains("newUserPhone")) {
             userPhone.setText(sharedPreferences.getString("newUserPhone", ""));
+        }
+        if(sharedPreferences.contains("totalNumberOfEvents")) {
+
+            int a = sharedPreferences.getInt("totalNumberOfEvents", 0);
+            String b = ""+a;
+            userAllEventsCount.setText(b);
         }
     }
 
@@ -196,7 +200,7 @@ public class ProfileActivity extends AppCompatActivity {
         
     }
 
-    public void EditUserInfo(View view) {
+    public void editUserInfo(View view) {
 
         AlertDialog.Builder  builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -216,7 +220,7 @@ public class ProfileActivity extends AppCompatActivity {
                         String status = editTextStatus.getText().toString();
                         String email = editTextEmail.getText().toString();
                         String phone = editTextPhone.getText().toString();
-                        ConfirmChanges(name, status, email, phone);
+                        confirmChanges(name, status, email, phone);
                     }
                 })
                 .setNegativeButton(R.string.editTextNegativeButton, new DialogInterface.OnClickListener() {
@@ -230,28 +234,27 @@ public class ProfileActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void ConfirmChanges(String name, String status, String email, String phone) {
-
+    private void confirmChanges(String name, String status, String email, String phone) {
         if(!name.isEmpty()){
             toolbar.setTitle(name);
-            WriteInPrefs("newUserName", name);
+            writeInPrefs("newUserName", name);
         }
         if(!status.isEmpty()){
             userStatus.setText(status);
-            WriteInPrefs("newUserStatus", status);
+            writeInPrefs("newUserStatus", status);
         }
         if(!email.isEmpty()){
             userEmail.setText(email);
-            WriteInPrefs("newUserEmail", email);
+            writeInPrefs("newUserEmail", email);
         }
         if(!phone.isEmpty()){
             userPhone.setText(phone);
-            WriteInPrefs("newUserPhone", phone);
+            writeInPrefs("newUserPhone", phone);
         }
-
+        Toast.makeText(this, "Some changes will be available after re-enter", Toast.LENGTH_SHORT).show();
     }
 
-    private void WriteInPrefs(String key, String value) {
+    private void writeInPrefs(String key, String value) {
         SharedPreferences sharedPreferences = this.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, value);
@@ -259,7 +262,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    public void ChangeImage() {
+    public void changeImage() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, CHOOSE_IMAGE_CODE);
@@ -347,11 +350,51 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.profile_settings:
-                //startActivity(new Intent(this, ProfileSettings.class));
-                ChangeImage();
+                //ChangeImage();
+
+                showOptionsDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showOptionsDialog() {
+        final String[] options = {"Edit profile info", "Pick new photo", "Log out"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Chose option")
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                       switch (which){
+                           case 0:
+                               editUserInfo(null);
+                               break;
+                           case 1:
+                               changeImage();
+                               break;
+                           case 2:
+                               logOut();
+                       }
+                    }
+                })
+        .setIcon(R.drawable.baseline_brush_black_48);
+
+         builder.create();
+         builder.show();
+    }
+
+    private void logOut() {
+        FirebaseAuth.getInstance().signOut();
+        SharedPreferences sharedPreferences = this.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("newUserName");
+        editor.remove("newUserEmail");
+        editor.remove("newUserPhone");
+        editor.remove("newUserStatus");
+        editor.remove("totalNumberOfEvents");
+        editor.apply();
+
+        startActivity(new Intent(this, SignupActivity.class));
     }
 }

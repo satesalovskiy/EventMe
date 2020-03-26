@@ -7,7 +7,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -53,6 +55,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.tsa.EventMe.ProfileActivity.APP_PREFERENCES;
 
 public class CreateEvent extends AppCompatActivity {
 
@@ -242,6 +246,9 @@ public class CreateEvent extends AppCompatActivity {
         ref.push().setValue(event);
         allEvents.push().setValue(event);
 
+        ProfileActivity.NUMBER_OF_ALL_EVENTS++;
+        writeTotalNumberInPrefs();
+
 //
 //        prepareNotification(
 //                "Jopa",
@@ -397,4 +404,12 @@ public class CreateEvent extends AppCompatActivity {
             date.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         }
     };
+
+    private void writeTotalNumberInPrefs() {
+        SharedPreferences sharedPreferences = this.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("totalNumberOfEvents", ProfileActivity.NUMBER_OF_ALL_EVENTS);
+        editor.apply();
+       // Toast.makeText(this, ""+ProfileActivity.NUMBER_OF_ALL_EVENTS, Toast.LENGTH_SHORT).show();
+    }
 }

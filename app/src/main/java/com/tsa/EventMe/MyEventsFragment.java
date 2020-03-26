@@ -2,8 +2,10 @@ package com.tsa.EventMe;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -38,6 +40,8 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.tsa.EventMe.ProfileActivity.APP_PREFERENCES;
 
 
 public class MyEventsFragment extends Fragment {
@@ -220,6 +224,7 @@ public class MyEventsFragment extends Fragment {
                         }
                         Toast.makeText(getContext(), "Post deleted", Toast.LENGTH_SHORT).show();
 
+
                     }
 
                     @Override
@@ -254,8 +259,12 @@ public class MyEventsFragment extends Fragment {
                     }
                 });
 
+
+                ProfileActivity.NUMBER_OF_ALL_EVENTS--;
+                writeTotalNumberInPrefs();
             }
         });
+
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -263,9 +272,17 @@ public class MyEventsFragment extends Fragment {
             }
         });
 
-
         builder.create().show();
 
+
+
+    }
+
+    private void writeTotalNumberInPrefs() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("totalNumberOfEvents", ProfileActivity.NUMBER_OF_ALL_EVENTS);
+        editor.apply();
     }
 
     public static class EventsViewHolder extends RecyclerView.ViewHolder {

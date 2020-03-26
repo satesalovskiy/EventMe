@@ -10,6 +10,7 @@ import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -38,6 +39,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+
+import static com.tsa.EventMe.ProfileActivity.APP_PREFERENCES;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -274,6 +277,12 @@ public class DetailsActivity extends AppCompatActivity {
 
                         ref = database.getReference().child("users").child(auth.getCurrentUser().getUid()).child("events");
                         ref.push().setValue(event);
+
+
+                        ProfileActivity.NUMBER_OF_ALL_EVENTS++;
+                        writeTotalNumberInPrefs();
+
+
                     }
 
                     @Override
@@ -298,5 +307,12 @@ public class DetailsActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void writeTotalNumberInPrefs() {
+        SharedPreferences sharedPreferences = this.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("totalNumberOfEvents", ProfileActivity.NUMBER_OF_ALL_EVENTS);
+        editor.apply();
     }
 }

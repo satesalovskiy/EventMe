@@ -42,5 +42,14 @@
     <string name="editTextHingEmail">Email</string>
     <string name="editTextHingPhone">Phone</string>
 
+    <string name="push_notifications">Receive push notifications?</string>
+    <string name="your_status">Status</string>
+    <string name="your_email">Email</string>
+    <string name="your_phone_number">Phone number</string>
+    <string name="your_events">All your events: </string>
+
+    <string name="profile_image_description">Profile image</string>
+
+
 
 </resources>
