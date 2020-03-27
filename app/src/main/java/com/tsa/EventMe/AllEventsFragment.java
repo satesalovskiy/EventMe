@@ -110,6 +110,7 @@ public class AllEventsFragment extends Fragment {
 
                                     final Object eventCreatorPhoto = dataSnapshot.child("userImage").getValue();
                                     final String eventCreatorEmail = dataSnapshot.child("userEmail").getValue().toString();
+
                                     final String eventImage = dataSnapshot.child("image").getValue().toString();
                                     final String eventTopic = dataSnapshot.child("topic").getValue().toString();
                                     final String eventDate = dataSnapshot.child("day").getValue().toString() +"."+
@@ -126,6 +127,7 @@ public class AllEventsFragment extends Fragment {
 
                                     dataSnapshot.getChildrenCount();
 
+                                    final String eventCreatorImage;
 
                                     if(eventCreatorPhoto == null) {
                                         Picasso.get()
@@ -134,6 +136,8 @@ public class AllEventsFragment extends Fragment {
                                                 .fit()
                                                 .centerInside()
                                                 .into(holder.eventCreatorPhoto);
+
+                                        eventCreatorImage = null;
                                     } else {
                                         Picasso.get()
                                                 .load(Uri.parse(eventCreatorPhoto.toString()))
@@ -141,12 +145,14 @@ public class AllEventsFragment extends Fragment {
                                                 .fit()
                                                 .centerInside()
                                                 .into(holder.eventCreatorPhoto);
+
+                                        eventCreatorImage = eventCreatorPhoto.toString();
                                     }
 
 
                                     Picasso.get()
                                             .load(Uri.parse(eventImage))
-                                            .placeholder(R.drawable.defaultimage)
+                                            .placeholder(R.drawable.qwe)
                                             .fit()
                                             .centerInside()
                                             .into(holder.eventImage);
@@ -168,6 +174,10 @@ public class AllEventsFragment extends Fragment {
                                             detailsIntent.putExtra("event_month", eventMonth);
                                             detailsIntent.putExtra("event_year", eventYear);
                                             detailsIntent.putExtra("event_creator_email", eventCreatorEmail);
+
+                                            if(eventCreatorPhoto != null) {
+                                                detailsIntent.putExtra("event_creator_photo", eventCreatorImage);
+                                            }
 
                                             detailsIntent.putExtra("event_description", description);
                                             detailsIntent.putExtra("event_ref", eventID);

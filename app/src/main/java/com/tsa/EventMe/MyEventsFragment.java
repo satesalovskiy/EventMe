@@ -98,8 +98,9 @@ public class MyEventsFragment extends Fragment {
                                 if(dataSnapshot.child("topic").getValue() != null) {
 
 
-                                   // final Object eventCreatorPhoto = dataSnapshot.child("userImage").getValue();
-                                   // final String eventCreatorEmail = dataSnapshot.child("userEmail").getValue().toString();
+                                    final Object eventCreatorPhoto1 = dataSnapshot.child("userImage").getValue();
+                                    final String eventCreatorEmail1 = dataSnapshot.child("userEmail").getValue().toString();
+
                                     final String eventImage = dataSnapshot.child("image").getValue().toString();
                                     final String eventTopic = dataSnapshot.child("topic").getValue().toString();
 
@@ -109,26 +110,32 @@ public class MyEventsFragment extends Fragment {
 
 
                                     holder.eventTopic.setText(eventTopic);
-                                   //holder.eventCreatorEmail.setText(eventCreatorEmail);
+                                    holder.eventCreatorEmail.setText(eventCreatorEmail1);
 
 
                                     dataSnapshot.getChildrenCount();
 
-//                                    if(eventCreatorPhoto == null) {
-//                                        Picasso.get()
-//                                                .load(R.drawable.defaultimage)
-//                                                .placeholder(R.drawable.defaultimage)
-//                                                .fit()
-//                                                .centerInside()
-//                                                .into(holder.eventCreatorPhoto);
-//                                    } else {
-//                                        Picasso.get()
-//                                                .load(Uri.parse(eventCreatorPhoto.toString()))
-//                                                .placeholder(R.drawable.defaultimage)
-//                                                .fit()
-//                                                .centerInside()
-//                                                .into(holder.eventCreatorPhoto);
-//                                    }
+                                    final String eventCreatorImage;
+
+                                    if(eventCreatorPhoto1 == null) {
+                                        Picasso.get()
+                                                .load(R.drawable.defaultimage)
+                                                .placeholder(R.drawable.defaultimage)
+                                                .fit()
+                                                .centerInside()
+                                                .into(holder.eventCreatorPhoto);
+
+                                        eventCreatorImage = null;
+                                    } else {
+                                        Picasso.get()
+                                                .load(Uri.parse(eventCreatorPhoto1.toString()))
+                                                .placeholder(R.drawable.defaultimage)
+                                                .fit()
+                                                .centerInside()
+                                                .into(holder.eventCreatorPhoto);
+
+                                        eventCreatorImage = eventCreatorPhoto1.toString();
+                                    }
 
 
                                     Picasso.get()
@@ -155,6 +162,11 @@ public class MyEventsFragment extends Fragment {
                                             detailsIntent.putExtra("event_year", eventYear);
                                             detailsIntent.putExtra("event_description", description);
                                             detailsIntent.putExtra("event_ref", eventID);
+                                            detailsIntent.putExtra("event_creator_email", eventCreatorEmail1);
+
+                                            if(eventCreatorPhoto1 != null) {
+                                                detailsIntent.putExtra("event_creator_photo", eventCreatorImage);
+                                            }
 
                                             startActivity(detailsIntent);
 
@@ -295,8 +307,8 @@ public class MyEventsFragment extends Fragment {
             super(itemView);
             eventTopic = (TextView) itemView.findViewById(R.id.eventTopic);
             eventImage = (ImageView) itemView.findViewById(R.id.eventImage);
-            //eventCreatorEmail = itemView.findViewById(R.id.eventCreatorEmail);
-            //eventCreatorPhoto = itemView.findViewById(R.id.eventCreatorPhoto);
+            eventCreatorEmail = itemView.findViewById(R.id.eventCreatorEmail);
+            eventCreatorPhoto = itemView.findViewById(R.id.eventCreatorPhoto);
         }
     }
 

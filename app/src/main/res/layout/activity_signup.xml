@@ -113,6 +113,7 @@
             android:layout_height="wrap_content"
             android:text="Log out"
             android:onClick="logOut"
+            android:visibility="gone"
             />
 
 

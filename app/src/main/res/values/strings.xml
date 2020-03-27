@@ -50,6 +50,8 @@
 
     <string name="profile_image_description">Profile image</string>
 
+    <string name="create_event_photo">Event photo</string>
+
 
 
 </resources>

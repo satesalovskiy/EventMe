@@ -85,7 +85,6 @@
                 android:text="@string/your_email"
                 android:textSize="20sp"
                 android:textColor="@color/black_text"
-                android:textStyle="bold"
                 android:layout_marginStart="20dp"
                 />
 

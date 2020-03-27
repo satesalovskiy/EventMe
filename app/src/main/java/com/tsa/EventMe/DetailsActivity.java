@@ -2,6 +2,7 @@ package com.tsa.EventMe;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
@@ -11,6 +12,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -40,6 +42,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static com.tsa.EventMe.ProfileActivity.APP_PREFERENCES;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -53,6 +57,8 @@ public class DetailsActivity extends AppCompatActivity {
     private String recievedDay;
     private String recievedMonth;
     private String recievedYear;
+    private String recievedCreatorEmail;
+    private String recievedCreatorPhoto = null;
 
     private String recievedImage;
     private String recievedRef;
@@ -68,6 +74,9 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView details_date;
     private ImageView star;
     FirebaseDatabase database;
+
+    private CircleImageView eventCreatorPhoto;
+    private TextView eventCreatorEmail;
 
     private Button switchCompat;
     private SharedPreferences sharedPreferences;
@@ -94,6 +103,11 @@ public class DetailsActivity extends AppCompatActivity {
         recievedDay = getIntent().getExtras().getString("event_day");
         recievedMonth = getIntent().getExtras().getString("event_month");
         recievedYear = getIntent().getExtras().getString("event_year");
+        recievedCreatorEmail = getIntent().getExtras().getString("event_creator_email");
+
+        if(getIntent().getExtras().containsKey("event_creator_photo")) {
+            recievedCreatorPhoto = getIntent().getExtras().getString("event_creator_photo");
+        }
 
 
 
@@ -103,6 +117,7 @@ public class DetailsActivity extends AppCompatActivity {
 
 
         toolbar.setTitle("Details");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white_text));
         setSupportActionBar(toolbar);
         ActionBar actionBar = (ActionBar) getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -122,6 +137,9 @@ public class DetailsActivity extends AppCompatActivity {
         details_date = findViewById(R.id.details_date);
         details_description = findViewById(R.id.details_description);
         star = findViewById(R.id.star);
+        eventCreatorEmail = findViewById(R.id.eventCreatorEmail);
+        eventCreatorPhoto = findViewById(R.id.eventCreatorPhoto);
+
 
         sharedPreferences = getSharedPreferences(ProfileActivity.APP_PREFERENCES, MODE_PRIVATE);
 
@@ -131,7 +149,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         Picasso.get()
                 .load(Uri.parse(recievedImage))
-                .placeholder(R.drawable.defaultimage)
+                .placeholder(R.drawable.qwe)
                 .fit()
                 .centerInside()
                 .into(details_image);
@@ -139,6 +157,17 @@ public class DetailsActivity extends AppCompatActivity {
         String datee = recievedDay + "-" + recievedMonth + "-" + recievedYear;
         details_date.setText(datee);
         details_description.setText(recievedDescription);
+
+
+        eventCreatorEmail.setText(recievedCreatorEmail);
+        if(recievedCreatorPhoto != null) {
+            Picasso.get()
+                    .load(Uri.parse(recievedCreatorPhoto))
+                    .placeholder(R.drawable.defaultimage)
+                    .fit()
+                    .centerInside()
+                    .into(eventCreatorPhoto);
+        }
 
 
         EVENTSRef = FirebaseDatabase.getInstance().getReference().child("events").child(recievedRef);
@@ -235,78 +264,88 @@ public class DetailsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.details_subscribe:
 
-
-
-               // startActivity(new Intent(this, ProfileSettings.class));
-                //Toast.makeText(this, "Subscribed", Toast.LENGTH_SHORT).show();
-                //star.setVisibility(View.VISIBLE);
-
-                EVENTSRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            if(dataSnapshot.child("topic").getValue() != null) {
-                                test = ")))";
-                            }
-
-                            test = dataSnapshot.child("topic").toString();
-
-                            //Log.d("MYTAG", dataSnapshot.child("topic").getValue().toString());
-
-                        date.set(Calendar.YEAR, Integer.parseInt(dataSnapshot.child("year").getValue().toString()));
-                        date.set(Calendar.MONTH, Integer.parseInt(dataSnapshot.child("month").getValue().toString()));
-                        date.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dataSnapshot.child("day").getValue().toString()));
-
-                        String userImageUrl;
-                        if(auth.getCurrentUser().getPhotoUrl() != null) {
-                            userImageUrl = auth.getCurrentUser().getPhotoUrl().toString();
-                        } else {
-                            userImageUrl = "https://vk.com/im?peers=103103918_83744687&sel=44403965&z=photo44403965_457242394%2Fmail1152840";
-                        }
-
-
-                        Event event = new Event(
-                                userImageUrl,
-                                auth.getCurrentUser().getUid(),
-                                auth.getCurrentUser().getEmail(),
-                                dataSnapshot.child("topic").getValue().toString(),
-                                dataSnapshot.child("description").getValue().toString(),
-                                dataSnapshot.child("image").getValue().toString(),
-                                dataSnapshot.child("location").getValue().toString(),
-                                date);
-
-                        ref = database.getReference().child("users").child(auth.getCurrentUser().getUid()).child("events");
-                        ref.push().setValue(event);
-
-
-                        ProfileActivity.NUMBER_OF_ALL_EVENTS++;
-                        writeTotalNumberInPrefs();
-
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-                //Toast.makeText(this, test, Toast.LENGTH_SHORT).show();
-//                if(test != null){
-//                    Log.d("MYTAG", test);
-//
-//                }
-
-
-
-
-
+                showAskDialog();
 
 
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showAskDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add to My Events?")
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                positiveAnswer();
+            }
+        })
+        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.create();
+        builder.show();
+    }
+
+    private void positiveAnswer() {
+        addToFavorite();
+    }
+
+    private void addToFavorite() {
+        EVENTSRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.child("topic").getValue() != null) {
+                    test = ")))";
+                }
+
+                test = dataSnapshot.child("topic").toString();
+
+                //Log.d("MYTAG", dataSnapshot.child("topic").getValue().toString());
+
+                date.set(Calendar.YEAR, Integer.parseInt(dataSnapshot.child("year").getValue().toString()));
+                date.set(Calendar.MONTH, Integer.parseInt(dataSnapshot.child("month").getValue().toString()));
+                date.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dataSnapshot.child("day").getValue().toString()));
+
+                String userImageUrl;
+                if(auth.getCurrentUser().getPhotoUrl() != null) {
+                    userImageUrl = auth.getCurrentUser().getPhotoUrl().toString();
+                } else {
+                    userImageUrl = "https://vk.com/im?peers=103103918_83744687&sel=44403965&z=photo44403965_457242394%2Fmail1152840";
+                }
+
+
+                Event event = new Event(
+                        userImageUrl,
+                        auth.getCurrentUser().getUid(),
+                        auth.getCurrentUser().getEmail(),
+                        dataSnapshot.child("topic").getValue().toString(),
+                        dataSnapshot.child("description").getValue().toString(),
+                        dataSnapshot.child("image").getValue().toString(),
+                        dataSnapshot.child("location").getValue().toString(),
+                        date);
+
+                ref = database.getReference().child("users").child(auth.getCurrentUser().getUid()).child("events");
+                ref.push().setValue(event);
+
+
+                ProfileActivity.NUMBER_OF_ALL_EVENTS++;
+                writeTotalNumberInPrefs();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private void writeTotalNumberInPrefs() {

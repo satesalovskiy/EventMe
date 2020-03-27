@@ -249,36 +249,6 @@ public class CreateEvent extends AppCompatActivity {
         ProfileActivity.NUMBER_OF_ALL_EVENTS++;
         writeTotalNumberInPrefs();
 
-//
-//        prepareNotification(
-//                "Jopa",
-//                auth.getCurrentUser().getEmail() + "added new post",
-//                topic +"\n"+description,
-//                "PostNotification",
-//                "Notifications"
-//
-//        );
-
-
-       // sendItPls(auth.getCurrentUser().getEmail(), topic + "\n " + description);
-
-
-//
-//        // The topic name can be optionally prefixed with "/topics/".
-//        String topic = "highScores";
-//
-//// See documentation on defining a message payload.
-//        Message message = Message.builder()
-//                .putData("score", "850")
-//                .putData("time", "2:45")
-//                .setTopic(topic)
-//                .build();
-//
-//// Send a message to the devices subscribed to the provided topic.
-//        String response = FirebaseMessaging.getInstance().send(message);
-//
-
-
         createTopic.setText("");
         createDescription.setText("");
         createLocation.setText("");
@@ -290,6 +260,7 @@ public class CreateEvent extends AppCompatActivity {
 
     }
 
+    //======Push Notifications. Do not work!=========
     private void sendItPls(String email, String s) {
         try{
 
@@ -331,8 +302,6 @@ public class CreateEvent extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
     private void prepareNotification (String pId, String title, String description, String notificationType, String notificationTopic) {
         String NOTIFICATION_TOPIC = "/topics/" + notificationTopic;
         String NOTIFICATION_TITLE = title;
@@ -360,7 +329,6 @@ public class CreateEvent extends AppCompatActivity {
 
         sendPostNotification(notificationJo);
     }
-
     private void sendPostNotification(JSONObject notificationJo) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", notificationJo, new Response.Listener<JSONObject>() {
             @Override
@@ -384,6 +352,8 @@ public class CreateEvent extends AppCompatActivity {
         };
         Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
+    //===============================================
+
 
     private void showSnackBar(String s) {
         Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinator2), s, Snackbar.LENGTH_LONG);
@@ -409,7 +379,5 @@ public class CreateEvent extends AppCompatActivity {
         SharedPreferences sharedPreferences = this.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("totalNumberOfEvents", ProfileActivity.NUMBER_OF_ALL_EVENTS);
-        editor.apply();
-       // Toast.makeText(this, ""+ProfileActivity.NUMBER_OF_ALL_EVENTS, Toast.LENGTH_SHORT).show();
-    }
+        editor.apply(); }
 }
