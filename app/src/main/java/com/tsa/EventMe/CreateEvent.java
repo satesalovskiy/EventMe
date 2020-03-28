@@ -2,12 +2,14 @@ package com.tsa.EventMe;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -15,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,8 +39,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -60,10 +67,13 @@ import static com.tsa.EventMe.ProfileActivity.APP_PREFERENCES;
 
 public class CreateEvent extends AppCompatActivity {
 
+    private boolean isOkey = true;
+
     private String topic;
     private String description;
     private String location;
     public String imageUrl;
+    private String userImageUrl;
     private EditText createTopic;
     private EditText createDescription;
     private EditText createLocation;
@@ -223,13 +233,32 @@ public class CreateEvent extends AppCompatActivity {
         description = createDescription.getText().toString();
         location = createLocation.getText().toString();
 
-        String userImageUrl;
+
         if(auth.getCurrentUser().getPhotoUrl() != null) {
             userImageUrl = auth.getCurrentUser().getPhotoUrl().toString();
         } else {
             userImageUrl = "https://vk.com/im?peers=103103918_83744687&sel=44403965&z=photo44403965_457242394%2Fmail1152840";
         }
 
+//        if(checkIsTheSameTopicHasAlreadyExists(topic)) {
+//            String newTopic = dialogNewTopic(topic);
+//            pushEvent(userImageUrl, auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), topic, description, imageUrl, location, date);
+//
+//        } else {
+//            pushEvent(userImageUrl, auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), topic, description, imageUrl, location, date);
+//        }
+
+      //
+//        if(checkIsTheSameTopicHasAlreadyExists(topic)) {
+//            pushEvent(userImageUrl, auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), topic, description, imageUrl, location, date);
+//        } else {
+//            dialogNewTopic();
+//        }
+        checkIsTheSameTopicHasAlreadyExists(topic);
+
+    }
+
+    private void pushEvent(String userImageUrl, String uid, String email, String topic, String description, String imageUrl, String location, Calendar date) {
 
         Event event = new Event(
                 userImageUrl,
@@ -257,6 +286,75 @@ public class CreateEvent extends AppCompatActivity {
         creatingImage.setImageResource(0);
 
         showSnackBar("Event created");
+    }
+
+    private void dialogNewTopic() {
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View view1 = inflater.inflate(R.layout.new_topic, null);
+
+        final EditText newTopic = view1.findViewById(R.id.edit_text_new_topic);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Event with the same topic has already exists. Enter new name in form below")
+                .setView(view1)
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                        if(newTopic.getText() != null) {
+
+                            if(newTopic.getText().toString().equals(topic)){
+                                Toast.makeText(getApplicationContext(), "Enter corrent topic!", Toast.LENGTH_SHORT).show();
+                                dialogInterface.dismiss();
+                            } else {
+                                checkIsTheSameTopicHasAlreadyExists(newTopic.getText().toString());
+                            }
+
+//                            checkIsTheSameTopicHasAlreadyExists(newTopic.getText().toString());
+//                            dialogInterface.dismiss();
+                            //String sTopic = newTopic.getText().toString();
+                            //pushEvent(userImageUrl, auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), sTopic, description, imageUrl, location, date);
+                        }
+                    }
+                })
+                .setNegativeButton("Back", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+        builder.create();
+        builder.show();
+
+    }
+
+
+    private void checkIsTheSameTopicHasAlreadyExists(String topic2) {
+    final String ij = topic2;
+    DatabaseReference EVENTSRef = FirebaseDatabase.getInstance().getReference().child("events");
+    Query mQuery = EVENTSRef.orderByChild("topic").equalTo(topic2);
+    mQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+            for(DataSnapshot ds: dataSnapshot.getChildren()) {
+                Toast.makeText(getApplicationContext(), ds.child("topic").getValue().toString(), Toast.LENGTH_SHORT).show();
+                dialogNewTopic();
+                return;
+            }
+            Toast.makeText(getApplicationContext(), "Я тута", Toast.LENGTH_SHORT).show();
+            pushEvent(userImageUrl, auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), ij, description, imageUrl, location, date);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    });
+
+
 
     }
 
