@@ -220,6 +220,9 @@ public class CreateEvent extends AppCompatActivity {
         ref.push().setValue(event);
         allEvents.push().setValue(event);
 
+        sendPushNotification(email, topic, imageUrl);
+
+
         createTopic.setText("");
         createDescription.setText("");
         createLocation.setText("");
@@ -228,6 +231,7 @@ public class CreateEvent extends AppCompatActivity {
         creatingImage.setImageResource(0);
 
         showSnackBar("Event created");
+
     }
 
     private void dialogNewTopic() {
@@ -285,8 +289,7 @@ public class CreateEvent extends AppCompatActivity {
         });
     }
 
-    //======Push Notifications. Do not work!=========
-    private void sendItPls(String email, String s) {
+    private void sendPushNotification(String email, String s, String image) {
         try {
 
             RequestQueue queue = Volley.newRequestQueue(this);
@@ -294,8 +297,14 @@ public class CreateEvent extends AppCompatActivity {
             String url = "https://fcm.googleapis.com/fcm/send";
 
             JSONObject data = new JSONObject();
-            data.put("title", "title");
-            data.put("body", "content");
+
+            data.put("title", "User " + email + " has created a new event!");
+            data.put("description", s);
+            data.put("image", image);
+
+
+
+
             JSONObject notification_data = new JSONObject();
             notification_data.put("data", data);
 
@@ -327,58 +336,6 @@ public class CreateEvent extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-    private void prepareNotification(String pId, String title, String description, String notificationType, String notificationTopic) {
-        String NOTIFICATION_TOPIC = "/topics/" + notificationTopic;
-        String NOTIFICATION_TITLE = title;
-        String NOTIFICATION_MESSAGE = description;
-        String NOTIFICATION_TYPE = notificationType;
-
-        JSONObject notificationJo = new JSONObject();
-        JSONObject notificationBodyJo = new JSONObject();
-        try {
-            notificationBodyJo.put("notificationType", NOTIFICATION_TYPE);
-            notificationBodyJo.put("sender", auth.getCurrentUser().getUid());
-            notificationBodyJo.put("pId", pId);
-            notificationBodyJo.put("pTitile", NOTIFICATION_TITLE);
-            notificationBodyJo.put("pDescription", NOTIFICATION_MESSAGE);
-
-
-            notificationJo.put("to", NOTIFICATION_TOPIC);
-
-            notificationJo.put("data", notificationBodyJo);
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        sendPostNotification(notificationJo);
-    }
-
-    private void sendPostNotification(JSONObject notificationJo) {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", notificationJo, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }) {
-            public Map<String, String> getHeaders() throws AuthFailureError {
-
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                headers.put("Authorization", "key=AAAAj4yNrKs:APA91bHwM8NIrDRY9pGFJSS1yFsidaCYicaVd0Zg0bLxk6AYE1qdlbYYYmS3JKgMx3OVyAtCltgLWzAM7SKKXbSVFFx9mPfUdILL5cA4W6uGbaVvXjoGurWryzF4l_GGYYYwgQXhkCyJ");
-                return headers;
-            }
-        };
-        Volley.newRequestQueue(this).add(jsonObjectRequest);
-    }
-    //===============================================
 
     private void showSnackBar(String s) {
         Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinator2), s, Snackbar.LENGTH_LONG);
