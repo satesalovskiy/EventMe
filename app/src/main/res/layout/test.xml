@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".AllEventsFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".AllEventsFragment">
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -15,5 +15,5 @@
         android:layout_centerInParent="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
-        android:background="@color/background_recycler"/>
+        android:background="@color/background_recycler" />
 </RelativeLayout>

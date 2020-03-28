@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/edit_text_name"
-        android:hint="@string/editTextHingName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:hint="@string/editTextHingName" />
+
     <EditText
         android:id="@+id/edit_text_status"
-        android:hint="@string/editTextHingStatus"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:hint="@string/editTextHingStatus" />
+
     <EditText
         android:id="@+id/edit_text_email"
-        android:hint="@string/editTextHingEmail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:hint="@string/editTextHingEmail" />
+
     <EditText
         android:id="@+id/edit_text_phone"
-        android:hint="@string/editTextHingPhone"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:hint="@string/editTextHingPhone" />
 
 </LinearLayout>

@@ -1,8 +1,5 @@
 package com.tsa.EventMe;
 
-import android.widget.LinearLayout;
-import android.widget.ListView;
-
 import java.util.LinkedList;
 import java.util.List;
 

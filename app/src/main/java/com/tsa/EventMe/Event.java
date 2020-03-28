@@ -2,7 +2,6 @@ package com.tsa.EventMe;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
 
 public class Event {
     private String topic;
@@ -14,23 +13,9 @@ public class Event {
     private int day;
     private String location;
     private String userEmail;
-
-    public String getUserImage() {
-        return userImage;
-    }
-
-    public void setUserImage(String userImage) {
-        this.userImage = userImage;
-    }
-
     private String userImage;
 
-
-
-    //private LinkedList<String> subscribers;
-
     Event() {
-
     }
 
     public Event(String userImage, String ui, String email, String topic, String description, String image, String location, Calendar calendar) {
@@ -46,6 +31,14 @@ public class Event {
         this.userImage = userImage;
 //        this.subscribers = new LinkedList<>();
 //        this.subscribers.add(ui);
+    }
+
+    public String getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(String userImage) {
+        this.userImage = userImage;
     }
 
     public String getTopic() {
@@ -119,12 +112,4 @@ public class Event {
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
-
-//    public LinkedList<String> getSubscribers() {
-//        return subscribers;
-//    }
-//
-//    public void setSubscribers(LinkedList<String> subscribers) {
-//        this.subscribers = subscribers;
-//    }
 }

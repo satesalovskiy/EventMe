@@ -1,22 +1,16 @@
 package com.tsa.EventMe;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +28,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -45,45 +38,36 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-import com.google.firebase.messaging.FirebaseMessaging;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.tsa.EventMe.ProfileActivity.APP_PREFERENCES;
 
 public class CreateEvent extends AppCompatActivity {
 
-    private boolean isOkey = true;
-
     private String topic;
     private String description;
     private String location;
-    public String imageUrl;
+    private String imageUrl;
     private String userImageUrl;
     private EditText createTopic;
     private EditText createDescription;
     private EditText createLocation;
-    private Calendar date;
     private ImageView creatingImage;
-    FirebaseAuth auth;
-    FirebaseDatabase database;
-    DatabaseReference ref;
-
-
+    private Calendar date;
+    private FirebaseAuth auth;
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
     private StorageReference mStorageRef;
 
     @Override
@@ -91,30 +75,22 @@ public class CreateEvent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        BottomAppBar bottomAppBar = (BottomAppBar) findViewById(R.id.bottom_app_bar);
-        //toolbar.setTitle("New Event");
-       // setSupportActionBar(toolbar);
+        BottomAppBar bottomAppBar = findViewById(R.id.bottom_app_bar);
         setSupportActionBar(bottomAppBar);
-        ActionBar actionBar = (ActionBar) getSupportActionBar();
-        //actionBar.setDisplayHomeAsUpEnabled(true);
+
         date = new GregorianCalendar();
         date = Calendar.getInstance();
 
-        createTopic = (EditText) findViewById(R.id.createEventTopic);
-        createDescription = (EditText) findViewById(R.id.createEventDescription);
-        creatingImage = (ImageView) findViewById(R.id.creatingImage);
-        createLocation = (EditText) findViewById(R.id.createEventLocation);
+        createTopic = findViewById(R.id.createEventTopic);
+        createDescription = findViewById(R.id.createEventDescription);
+        creatingImage = findViewById(R.id.creatingImage);
+        createLocation = findViewById(R.id.createEventLocation);
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-
-
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -136,17 +112,14 @@ public class CreateEvent extends AppCompatActivity {
         }
     }
 
-
-    public void chooseDate(){
-        Toast.makeText(this, "Choosing date", Toast.LENGTH_SHORT).show();
+    public void chooseDate() {
         new DatePickerDialog(CreateEvent.this, datePickerListener,
                 date.get(Calendar.YEAR),
                 date.get(Calendar.MONTH),
                 date.get(Calendar.DAY_OF_MONTH)).show();
-
     }
 
-    public void chooseImage(){
+    public void chooseImage() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, 1);
@@ -156,24 +129,21 @@ public class CreateEvent extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
-        switch(requestCode) {
+        switch (requestCode) {
             case 1:
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     final Uri selectedImage = imageReturnedIntent.getData();
+
                     String name = generateRandomNameForImage();
 
-                    final StorageReference imagesRef = mStorageRef.child("images/"+name+".jpg");
-
+                    final StorageReference imagesRef = mStorageRef.child("images/" + name + ".jpg");
                     UploadTask uploadTask = imagesRef.putFile(selectedImage);
-
                     Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                         @Override
                         public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                             if (!task.isSuccessful()) {
                                 throw task.getException();
                             }
-
-                            // Continue with the task to get the download URL
                             return imagesRef.getDownloadUrl();
                         }
                     }).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -181,25 +151,18 @@ public class CreateEvent extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Uri> task) {
                             if (task.isSuccessful()) {
                                 Uri downloadUri = task.getResult();
-
                                 if (downloadUri != null) {
-
-                                    //=====================
                                     String photoStringLink = downloadUri.toString();
                                     setImageUrl(photoStringLink);
-
                                 }
-
                             }
                         }
                     });
-
-
                 }
         }
     }
 
-    private void setImageUrl(String url){
+    private void setImageUrl(String url) {
         imageUrl = url;
         Picasso.get()
                 .load(url)
@@ -209,23 +172,21 @@ public class CreateEvent extends AppCompatActivity {
                 .into(creatingImage);
     }
 
-    private String generateRandomNameForImage(){
+    private String generateRandomNameForImage() {
         String symbols = "qwertyuiopasdfghjklzxcvbnm";
         StringBuilder randString = new StringBuilder();
 
-        int count = 10 + (int)(Math.random()*30);
+        int count = 10 + (int) (Math.random() * 30);
 
-        for(int i=0;i<count;i++)
-            randString.append(symbols.charAt((int)(Math.random()*symbols.length())));
+        for (int i = 0; i < count; i++)
+            randString.append(symbols.charAt((int) (Math.random() * symbols.length())));
 
         return randString.toString();
     }
 
     public void createEvent(View view) {
-
-
-        if(createTopic.getText().toString().isEmpty() || createDescription.getText().toString().isEmpty() || imageUrl.isEmpty() || createLocation.getText().toString().isEmpty()){
-            Toast.makeText(CreateEvent.this, "Please define topic, description, location and image",Toast.LENGTH_SHORT).show();
+        if (createTopic.getText().toString().isEmpty() || createDescription.getText().toString().isEmpty() || imageUrl.isEmpty() || createLocation.getText().toString().isEmpty()) {
+            Toast.makeText(CreateEvent.this, "Please define topic, description, location and image", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -233,29 +194,13 @@ public class CreateEvent extends AppCompatActivity {
         description = createDescription.getText().toString();
         location = createLocation.getText().toString();
 
-
-        if(auth.getCurrentUser().getPhotoUrl() != null) {
+        if (auth.getCurrentUser().getPhotoUrl() != null) {
             userImageUrl = auth.getCurrentUser().getPhotoUrl().toString();
         } else {
             userImageUrl = "https://vk.com/im?peers=103103918_83744687&sel=44403965&z=photo44403965_457242394%2Fmail1152840";
         }
 
-//        if(checkIsTheSameTopicHasAlreadyExists(topic)) {
-//            String newTopic = dialogNewTopic(topic);
-//            pushEvent(userImageUrl, auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), topic, description, imageUrl, location, date);
-//
-//        } else {
-//            pushEvent(userImageUrl, auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), topic, description, imageUrl, location, date);
-//        }
-
-      //
-//        if(checkIsTheSameTopicHasAlreadyExists(topic)) {
-//            pushEvent(userImageUrl, auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), topic, description, imageUrl, location, date);
-//        } else {
-//            dialogNewTopic();
-//        }
         checkIsTheSameTopicHasAlreadyExists(topic);
-
     }
 
     private void pushEvent(String userImageUrl, String uid, String email, String topic, String description, String imageUrl, String location, Calendar date) {
@@ -275,14 +220,11 @@ public class CreateEvent extends AppCompatActivity {
         ref.push().setValue(event);
         allEvents.push().setValue(event);
 
-        ProfileActivity.NUMBER_OF_ALL_EVENTS++;
-        writeTotalNumberInPrefs();
-
         createTopic.setText("");
         createDescription.setText("");
         createLocation.setText("");
         date.clear();
-        imageUrl="";
+        imageUrl = "";
         creatingImage.setImageResource(0);
 
         showSnackBar("Event created");
@@ -291,7 +233,6 @@ public class CreateEvent extends AppCompatActivity {
     private void dialogNewTopic() {
         LayoutInflater inflater = this.getLayoutInflater();
         final View view1 = inflater.inflate(R.layout.new_topic, null);
-
         final EditText newTopic = view1.findViewById(R.id.edit_text_new_topic);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -300,21 +241,14 @@ public class CreateEvent extends AppCompatActivity {
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        if (newTopic.getText() != null) {
 
-
-                        if(newTopic.getText() != null) {
-
-                            if(newTopic.getText().toString().equals(topic)){
-                                Toast.makeText(getApplicationContext(), "Enter corrent topic!", Toast.LENGTH_SHORT).show();
+                            if (newTopic.getText().toString().equals(topic)) {
+                                Toast.makeText(getApplicationContext(), "Enter correct topic!", Toast.LENGTH_SHORT).show();
                                 dialogInterface.dismiss();
                             } else {
                                 checkIsTheSameTopicHasAlreadyExists(newTopic.getText().toString());
                             }
-
-//                            checkIsTheSameTopicHasAlreadyExists(newTopic.getText().toString());
-//                            dialogInterface.dismiss();
-                            //String sTopic = newTopic.getText().toString();
-                            //pushEvent(userImageUrl, auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), sTopic, description, imageUrl, location, date);
                         }
                     }
                 })
@@ -327,40 +261,33 @@ public class CreateEvent extends AppCompatActivity {
 
         builder.create();
         builder.show();
-
     }
 
-
     private void checkIsTheSameTopicHasAlreadyExists(String topic2) {
-    final String ij = topic2;
-    DatabaseReference EVENTSRef = FirebaseDatabase.getInstance().getReference().child("events");
-    Query mQuery = EVENTSRef.orderByChild("topic").equalTo(topic2);
-    mQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        final String ij = topic2;
+        DatabaseReference EVENTSRef = FirebaseDatabase.getInstance().getReference().child("events");
+        Query mQuery = EVENTSRef.orderByChild("topic").equalTo(topic2);
+        mQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-            for(DataSnapshot ds: dataSnapshot.getChildren()) {
-                Toast.makeText(getApplicationContext(), ds.child("topic").getValue().toString(), Toast.LENGTH_SHORT).show();
-                dialogNewTopic();
-                return;
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    dialogNewTopic();
+                    return;
+                }
+                pushEvent(userImageUrl, auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), ij, description, imageUrl, location, date);
             }
-            Toast.makeText(getApplicationContext(), "Я тута", Toast.LENGTH_SHORT).show();
-            pushEvent(userImageUrl, auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail(), ij, description, imageUrl, location, date);
-        }
 
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-        }
-    });
-
-
-
+            }
+        });
     }
 
     //======Push Notifications. Do not work!=========
     private void sendItPls(String email, String s) {
-        try{
+        try {
 
             RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -372,7 +299,7 @@ public class CreateEvent extends AppCompatActivity {
             JSONObject notification_data = new JSONObject();
             notification_data.put("data", data);
 
-            notification_data.put("to","/topics/Notifications");
+            notification_data.put("to", "/topics/Notifications");
 
             JsonObjectRequest request = new JsonObjectRequest(url, notification_data, new Response.Listener<JSONObject>() {
                 @Override
@@ -396,11 +323,12 @@ public class CreateEvent extends AppCompatActivity {
 
             queue.add(request);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    private void prepareNotification (String pId, String title, String description, String notificationType, String notificationTopic) {
+
+    private void prepareNotification(String pId, String title, String description, String notificationType, String notificationTopic) {
         String NOTIFICATION_TOPIC = "/topics/" + notificationTopic;
         String NOTIFICATION_TITLE = title;
         String NOTIFICATION_MESSAGE = description;
@@ -411,7 +339,7 @@ public class CreateEvent extends AppCompatActivity {
         try {
             notificationBodyJo.put("notificationType", NOTIFICATION_TYPE);
             notificationBodyJo.put("sender", auth.getCurrentUser().getUid());
-            notificationBodyJo.put("pId",pId);
+            notificationBodyJo.put("pId", pId);
             notificationBodyJo.put("pTitile", NOTIFICATION_TITLE);
             notificationBodyJo.put("pDescription", NOTIFICATION_MESSAGE);
 
@@ -427,6 +355,7 @@ public class CreateEvent extends AppCompatActivity {
 
         sendPostNotification(notificationJo);
     }
+
     private void sendPostNotification(JSONObject notificationJo) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", notificationJo, new Response.Listener<JSONObject>() {
             @Override
@@ -438,8 +367,7 @@ public class CreateEvent extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
 
             }
-        })
-        {
+        }) {
             public Map<String, String> getHeaders() throws AuthFailureError {
 
                 Map<String, String> headers = new HashMap<>();
@@ -452,7 +380,6 @@ public class CreateEvent extends AppCompatActivity {
     }
     //===============================================
 
-
     private void showSnackBar(String s) {
         Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinator2), s, Snackbar.LENGTH_LONG);
         snackbar.setAction("Ok", new View.OnClickListener() {
@@ -464,18 +391,12 @@ public class CreateEvent extends AppCompatActivity {
         snackbar.show();
     }
 
-
-    DatePickerDialog.OnDateSetListener datePickerListener=new DatePickerDialog.OnDateSetListener() {
+    DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             date.set(Calendar.YEAR, year);
-            date.set(Calendar.MONTH, monthOfYear+1);
+            date.set(Calendar.MONTH, monthOfYear + 1);
             date.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         }
     };
 
-    private void writeTotalNumberInPrefs() {
-        SharedPreferences sharedPreferences = this.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("totalNumberOfEvents", ProfileActivity.NUMBER_OF_ALL_EVENTS);
-        editor.apply(); }
 }

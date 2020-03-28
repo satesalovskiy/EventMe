@@ -11,24 +11,37 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashActivity"
-            android:theme="@style/AppTheme.Launcher">
 
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/AppTheme.Launcher">
         </activity>
+
         <activity
             android:name=".DetailsActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity">
+        </activity>
+
         <activity
             android:name=".ProfileSettings"
-            android:parentActivityName=".ProfileActivity" />
+            android:parentActivityName=".ProfileActivity">
+        </activity>
+
         <activity
             android:name=".CreateEvent"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity">
+        </activity>
+
         <activity
             android:name=".ProfileActivity"
             android:label="@string/profile_activity"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".LoginActivity" />
+            android:parentActivityName=".MainActivity">
+        </activity>
+
+        <activity
+            android:name=".LoginActivity">
+        </activity>
+
         <activity
             android:name=".SignupActivity"
             android:theme="@style/AppTheme.Launcher">
@@ -37,19 +50,23 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity android:name=".MainActivity" />
+
+        <activity
+            android:name=".MainActivity">
+        </activity>
 
         <service
             android:name=".MyFBService"
             android:exported="false">
+
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
         <receiver android:name=".ReminderBroadcast" />
+
     </application>
 
 </manifest>

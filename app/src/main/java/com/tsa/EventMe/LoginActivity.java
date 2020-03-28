@@ -20,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText inputEmail, inputPassword;
-    private Button btnSignin;
     private ProgressBar progressBar;
     private FirebaseAuth auth;
 
@@ -29,15 +28,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         auth = FirebaseAuth.getInstance();
-//        if (auth.getCurrentUser() != null) {
-//            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-//        }
         setContentView(R.layout.activity_login);
 
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        btnSignin = (Button) findViewById(R.id.sign_in_button);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        inputEmail = findViewById(R.id.email);
+        inputPassword = findViewById(R.id.password);
+        Button btnSignin = findViewById(R.id.sign_in_button);
+        progressBar = findViewById(R.id.progressBar);
 
         btnSignin.setOnClickListener(new View.OnClickListener() {
             @Override

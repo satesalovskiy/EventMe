@@ -1,82 +1,54 @@
 package com.tsa.EventMe;
 
-
-import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.ListFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-
 public class AllEventsFragment extends Fragment {
-    private View EventsView;
-    private RecyclerView myEventList;
-    private DatabaseReference EVENTSRef;
-    private Query eventsRef;
-    private FirebaseAuth auth;
-    private String currentUserId;
-    FirebaseRecyclerAdapter<Event, EventsViewHolder> adapter;
 
+    private DatabaseReference EVENTSRef;
+    private Query eventsRefQuery;
+    private RecyclerView myEventList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        EventsView =  inflater.inflate(R.layout.test, container, false);
-
-        myEventList = (RecyclerView) EventsView.findViewById(R.id.events_list);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-
-        //=======
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
-        //=======
 
+        View EventsView = inflater.inflate(R.layout.test, container, false);
+
+        myEventList = EventsView.findViewById(R.id.events_list);
         myEventList.addItemDecoration(new SpacesItemDecoration(20));
         myEventList.setLayoutManager(layoutManager);
 
-
-        auth = FirebaseAuth.getInstance();
-        currentUserId = auth.getUid();
-
-        //Как то так мб?
-        eventsRef = FirebaseDatabase.getInstance().getReference().child("events");
-
-
+        eventsRefQuery = FirebaseDatabase.getInstance().getReference().child("events");
         EVENTSRef = FirebaseDatabase.getInstance().getReference().child("events");
-
 
         return EventsView;
     }
@@ -87,39 +59,36 @@ public class AllEventsFragment extends Fragment {
         super.onStart();
 
         FirebaseRecyclerOptions option = new FirebaseRecyclerOptions.Builder<Event>()
-                .setQuery(eventsRef, Event.class)
+                .setQuery(eventsRefQuery, Event.class)
                 .build();
 
 
-        adapter =
+        FirebaseRecyclerAdapter<Event, EventsViewHolder> adapter =
                 new FirebaseRecyclerAdapter<Event, EventsViewHolder>(option) {
-
 
                     @Override
                     protected void onBindViewHolder(@NonNull final EventsViewHolder holder, final int position, @NonNull Event model) {
 
-                        String evetnsIDs = getRef(position).getKey();
+                        String eventsIDs = getRef(position).getKey();
 
-
-                        EVENTSRef.child(evetnsIDs).addValueEventListener(new ValueEventListener() {
+                        EVENTSRef.child(eventsIDs).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
-                                if(dataSnapshot.child("topic").getValue() != null) {
+                                if (dataSnapshot.child("topic").getValue() != null) {
 
                                     final Object eventCreatorPhoto = dataSnapshot.child("userImage").getValue();
                                     final String eventCreatorEmail = dataSnapshot.child("userEmail").getValue().toString();
-
                                     final String eventImage = dataSnapshot.child("image").getValue().toString();
                                     final String eventTopic = dataSnapshot.child("topic").getValue().toString();
-                                    final String eventDate = dataSnapshot.child("day").getValue().toString() +"."+
-                                            dataSnapshot.child("month").getValue().toString() + "."+
+                                    final String eventDate = dataSnapshot.child("day").getValue().toString() + "." +
+                                            dataSnapshot.child("month").getValue().toString() + "." +
                                             dataSnapshot.child("year").getValue().toString();
-
                                     final String eventDay = dataSnapshot.child("day").getValue().toString();
                                     final String eventMonth = dataSnapshot.child("month").getValue().toString();
                                     final String eventYear = dataSnapshot.child("year").getValue().toString();
+                                    final String description = dataSnapshot.child("description").getValue().toString();
+                                    final String eventID = dataSnapshot.getRef().getKey();
 
                                     holder.eventTopic.setText(eventTopic);
                                     holder.eventDate.setText(eventDate);
@@ -128,15 +97,13 @@ public class AllEventsFragment extends Fragment {
                                     dataSnapshot.getChildrenCount();
 
                                     final String eventCreatorImage;
-
-                                    if(eventCreatorPhoto == null) {
+                                    if (eventCreatorPhoto == null) {
                                         Picasso.get()
                                                 .load(R.drawable.defaultimage)
                                                 .placeholder(R.drawable.defaultimage)
                                                 .fit()
                                                 .centerInside()
                                                 .into(holder.eventCreatorPhoto);
-
                                         eventCreatorImage = null;
                                     } else {
                                         Picasso.get()
@@ -145,10 +112,8 @@ public class AllEventsFragment extends Fragment {
                                                 .fit()
                                                 .centerInside()
                                                 .into(holder.eventCreatorPhoto);
-
                                         eventCreatorImage = eventCreatorPhoto.toString();
                                     }
-
 
                                     Picasso.get()
                                             .load(Uri.parse(eventImage))
@@ -157,42 +122,27 @@ public class AllEventsFragment extends Fragment {
                                             .centerInside()
                                             .into(holder.eventImage);
 
-
-                                    final String description = dataSnapshot.child("description").getValue().toString();
-                                    final String eventID = dataSnapshot.getRef().getKey();
-
-
                                     holder.itemView.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            Toast.makeText(getContext(), eventID, Toast.LENGTH_SHORT).show();
-
-                                            Intent detailsIntent = new Intent(getContext(), DetailsActivity.class );
+                                            Intent detailsIntent = new Intent(getContext(), DetailsActivity.class);
                                             detailsIntent.putExtra("event_photo", eventImage);
                                             detailsIntent.putExtra("event_topic", eventTopic);
                                             detailsIntent.putExtra("event_day", eventDay);
                                             detailsIntent.putExtra("event_month", eventMonth);
                                             detailsIntent.putExtra("event_year", eventYear);
                                             detailsIntent.putExtra("event_creator_email", eventCreatorEmail);
-
-                                            if(eventCreatorPhoto != null) {
-                                                detailsIntent.putExtra("event_creator_photo", eventCreatorImage);
-                                            }
-
                                             detailsIntent.putExtra("event_description", description);
                                             detailsIntent.putExtra("event_ref", eventID);
 
+                                            if (eventCreatorPhoto != null) {
+                                                detailsIntent.putExtra("event_creator_photo", eventCreatorImage);
+                                            }
+
                                             startActivity(detailsIntent);
                                         }
-
-
-
-
                                     });
                                 }
-
-
-
                             }
 
                             @Override
@@ -207,43 +157,28 @@ public class AllEventsFragment extends Fragment {
                     public EventsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
                         EventsViewHolder viewHolder = new EventsViewHolder(view);
-
-
-
-                        return  viewHolder;
+                        return viewHolder;
                     }
                 };
 
         myEventList.setAdapter(adapter);
-
-
-
-
         adapter.startListening();
-
     }
 
-
-
-    public static class EventsViewHolder extends RecyclerView.ViewHolder {
+    static class EventsViewHolder extends RecyclerView.ViewHolder {
 
         TextView eventDate, eventTopic, eventCreatorEmail;
         ImageView eventImage;
         CircleImageView eventCreatorPhoto;
 
-
-
-
-        public EventsViewHolder(@NonNull View itemView) {
+        EventsViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            eventDate = (TextView) itemView.findViewById(R.id.eventDate);
-            eventTopic = (TextView) itemView.findViewById(R.id.eventTopic);
-            eventImage = (ImageView) itemView.findViewById(R.id.eventImage);
+            eventDate = itemView.findViewById(R.id.eventDate);
+            eventTopic = itemView.findViewById(R.id.eventTopic);
+            eventImage = itemView.findViewById(R.id.eventImage);
             eventCreatorEmail = itemView.findViewById(R.id.eventCreatorEmail);
             eventCreatorPhoto = itemView.findViewById(R.id.eventCreatorPhoto);
-
-
         }
     }
 }

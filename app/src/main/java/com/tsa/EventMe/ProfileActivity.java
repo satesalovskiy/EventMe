@@ -31,6 +31,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -40,27 +46,14 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES = "myprefs";
-    public static int NUMBER_OF_ALL_EVENTS = 0;
+    private int CHOOSE_IMAGE_CODE = 111;
 
-    private ImageView personImage;
-
-    private String name;
-    private String phone;
-    private String email;
-    private String status;
     private Toolbar toolbar;
-
-    private TextView userName;
     private TextView userStatus;
     private TextView userEmail;
     private TextView userPhone;
     private TextView userAllEventsCount;
-
-    private ImageView editImage;
-    private EditText editText;
-    private int CHOOSE_IMAGE_CODE = 111;
-    private AlertDialog dialog;
-
+    private ImageView personImage;
     private SwitchCompat postSwitch;
     private SharedPreferences sharedPreferences;
 
@@ -69,33 +62,23 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Person name");
         toolbar.setTitleTextColor(getResources().getColor(R.color.white_text));
-
         setSupportActionBar(toolbar);
-        ActionBar actionBar = (ActionBar) getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        personImage = (ImageView) findViewById(R.id.person_image);
+        personImage = findViewById(R.id.person_image);
         personImage.setImageResource(R.drawable.defaultimage);
-
         userStatus = findViewById(R.id.user_status);
         userEmail = findViewById(R.id.user_email);
         userPhone = findViewById(R.id.user_phone);
         postSwitch = findViewById(R.id.post_switch);
         userAllEventsCount = findViewById(R.id.user_number_of_events);
 
+        countTotalNumberOfUsersEvents();
 
-
-        // editText = findViewById(R.id.edit_text);
-
-        // editImage = findViewById(R.id.change_image_button);
-//
-//        editText.setFocusable(View.FOCUSABLE);
-//        editText.setFocusableInTouchMode(true);
-//        editText.setInputType(InputType.TYPE_NULL);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -109,44 +92,33 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
 
-
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, 0);
 
         setSwitchListener();
 
-        if(sharedPreferences.contains("newUserName")) {
+        if (sharedPreferences.contains("newUserName")) {
             toolbar.setTitle(sharedPreferences.getString("newUserName", ""));
         }
-        if(sharedPreferences.contains("newUserEmail")) {
+        if (sharedPreferences.contains("newUserEmail")) {
             userEmail.setText(sharedPreferences.getString("newUserEmail", ""));
         }
-        if(sharedPreferences.contains("newUserStatus")) {
+        if (sharedPreferences.contains("newUserStatus")) {
             userStatus.setText(sharedPreferences.getString("newUserStatus", ""));
         }
-        if(sharedPreferences.contains("newUserPhone")) {
+        if (sharedPreferences.contains("newUserPhone")) {
             userPhone.setText(sharedPreferences.getString("newUserPhone", ""));
-        }
-        if(sharedPreferences.contains("totalNumberOfEvents")) {
-
-            int a = sharedPreferences.getInt("totalNumberOfEvents", 0);
-            String b = ""+a;
-            userAllEventsCount.setText(b);
         }
     }
 
 
-
     private void setSwitchListener() {
-
         boolean isPostEnabled = sharedPreferences.getBoolean("Notifications", false);
 
-        if(isPostEnabled) {
+        if (isPostEnabled) {
             postSwitch.setChecked(true);
         } else {
             postSwitch.setChecked(false);
         }
-
-
         postSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -155,8 +127,7 @@ public class ProfileActivity extends AppCompatActivity {
                 edit.putBoolean("Notifications", b);
                 edit.apply();
 
-
-                if(b){
+                if (b) {
                     subscribePostNotifications();
                 } else {
                     unsubscribePostNotifications();
@@ -173,7 +144,7 @@ public class ProfileActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         String msg = "You will not receive post notifications";
 
-                        if(!task.isSuccessful()) {
+                        if (!task.isSuccessful()) {
                             msg = "UnSubscription failed";
                         }
 
@@ -190,19 +161,18 @@ public class ProfileActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         String msg = "You will receive post notifications";
 
-                        if(!task.isSuccessful()) {
+                        if (!task.isSuccessful()) {
                             msg = "Subscription failed";
                         }
 
                         Toast.makeText(ProfileActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
                 });
-        
     }
 
     public void editUserInfo(View view) {
 
-        AlertDialog.Builder  builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         final View view1 = inflater.inflate(R.layout.edit_user_profile_info, null);
 
@@ -230,24 +200,24 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
 
-        dialog = builder.create();
+        AlertDialog dialog = builder.create();
         dialog.show();
     }
 
     private void confirmChanges(String name, String status, String email, String phone) {
-        if(!name.isEmpty()){
+        if (!name.isEmpty()) {
             toolbar.setTitle(name);
             writeInPrefs("newUserName", name);
         }
-        if(!status.isEmpty()){
+        if (!status.isEmpty()) {
             userStatus.setText(status);
             writeInPrefs("newUserStatus", status);
         }
-        if(!email.isEmpty()){
+        if (!email.isEmpty()) {
             userEmail.setText(email);
             writeInPrefs("newUserEmail", email);
         }
-        if(!phone.isEmpty()){
+        if (!phone.isEmpty()) {
             userPhone.setText(phone);
             writeInPrefs("newUserPhone", phone);
         }
@@ -288,8 +258,6 @@ public class ProfileActivity extends AppCompatActivity {
                     handleUpload(uri);
             }
         }
-
-
     }
 
     private void handleUpload(Uri uri) {
@@ -311,10 +279,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
-
 
     private void getDownloadUrl(StorageReference reference) {
         reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -350,8 +315,6 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.profile_settings:
-                //ChangeImage();
-
                 showOptionsDialog();
                 return true;
             default:
@@ -366,22 +329,22 @@ public class ProfileActivity extends AppCompatActivity {
         builder.setTitle("Chose option")
                 .setItems(options, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                       switch (which){
-                           case 0:
-                               editUserInfo(null);
-                               break;
-                           case 1:
-                               changeImage();
-                               break;
-                           case 2:
-                               logOut();
-                       }
+                        switch (which) {
+                            case 0:
+                                editUserInfo(null);
+                                break;
+                            case 1:
+                                changeImage();
+                                break;
+                            case 2:
+                                logOut();
+                        }
                     }
                 })
-        .setIcon(R.drawable.baseline_brush_black_48);
+                .setIcon(R.drawable.baseline_brush_black_48);
 
-         builder.create();
-         builder.show();
+        builder.create();
+        builder.show();
     }
 
     private void logOut() {
@@ -396,5 +359,34 @@ public class ProfileActivity extends AppCompatActivity {
         editor.apply();
 
         startActivity(new Intent(this, SignupActivity.class));
+    }
+
+    private void countTotalNumberOfUsersEvents() {
+
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+
+        DatabaseReference EVENTSRef = FirebaseDatabase.getInstance().getReference().child("users").child(currentUserId).child("events");
+        Query mQuery = EVENTSRef.orderByChild("userEmail");
+
+        mQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int number=0;
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    number++;
+                }
+                setResultCount(number);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setResultCount(int number){
+        String aa = ""+number;
+        userAllEventsCount.setText(aa);
     }
 }
