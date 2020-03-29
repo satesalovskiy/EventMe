@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
@@ -37,7 +38,10 @@ public class MyFBService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         Log.d("SUPERTESTTAG", remoteMessage.getData().toString());
 
-        sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("description"), remoteMessage.getData().get("image"));
+        if(!remoteMessage.getData().get("useremail").equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+            sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("description"), remoteMessage.getData().get("image"));
+        }
+
     }
 
     @Override

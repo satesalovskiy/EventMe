@@ -301,6 +301,7 @@ public class CreateEvent extends AppCompatActivity {
             data.put("title", "User " + email + " has created a new event!");
             data.put("description", s);
             data.put("image", image);
+            data.put("useremail", email);
 
 
 
