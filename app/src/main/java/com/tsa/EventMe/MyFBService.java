@@ -37,7 +37,7 @@ public class MyFBService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         Log.d("SUPERTESTTAG", remoteMessage.getData().toString());
 
-        sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("description"),  remoteMessage.getData().get("image"));
+        sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("description"), remoteMessage.getData().get("image"));
     }
 
     @Override
@@ -60,18 +60,18 @@ public class MyFBService extends FirebaseMessagingService {
                 R.drawable.baseline_brush_black_48);
 
         try {
-           URL url = new URL(image);
-           largeIcon = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+            URL url = new URL(image);
+            largeIcon = BitmapFactory.decodeStream(url.openConnection().getInputStream());
         } catch (MalformedURLException ex) {
             Log.d("LOADINGBITMAP", "MalformedURL");
-        }  catch (IOException ex) {
+        } catch (IOException ex) {
             Log.d("LOADINGBITMAP", "IO exception");
-         }
+        }
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.baseline_brush_black_48)
+                        .setSmallIcon(R.drawable.bird)
                         .setLargeIcon(largeIcon)
                         .setContentTitle(title)
                         .setContentText(description)

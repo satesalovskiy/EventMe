@@ -44,7 +44,7 @@ public class SignupActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
         }
 
-        setContentView(R.layout.testik);
+        setContentView(R.layout.activity_signup);
 
         inputEmail = findViewById(R.id.email);
         inputPassword = findViewById(R.id.password);

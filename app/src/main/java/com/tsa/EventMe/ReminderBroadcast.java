@@ -13,7 +13,7 @@ public class ReminderBroadcast extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "remindMe")
-                .setSmallIcon(R.drawable.baseline_account_circle_24)
+                .setSmallIcon(R.drawable.bird)
                 .setContentTitle("Event remind")
                 .setContentText(intent.getExtras().getString("Topic"))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);

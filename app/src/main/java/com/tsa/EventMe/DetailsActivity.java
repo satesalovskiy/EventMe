@@ -157,7 +157,7 @@ public class DetailsActivity extends AppCompatActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         Date date12 = date.getTime();
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, date12.getTime(), pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, 10000, pendingIntent);
     }
 
     private void createNotificationChanel() {
