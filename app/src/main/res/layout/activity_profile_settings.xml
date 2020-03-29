@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.tsa.EventMe.ProfileSettings">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
+
+    <Button
+        android:id="@+id/change_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:hint="Chane profile image"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/change_first_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/change_image"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:hint="Change first name"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/change_second_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/change_first_name"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:hint="Change surname"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/change_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/change_second_name"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:hint="Change status"
+        android:textSize="20sp" />
+
+</RelativeLayout>

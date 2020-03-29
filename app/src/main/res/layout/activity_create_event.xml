@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.tsa.EventMe.CreateEvent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="20dp">
+
+            <EditText
+                android:id="@+id/createEventTopic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:hint="@string/createEventTopic"
+                android:inputType="text"
+                android:paddingTop="20dp"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/createEventDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:hint="@string/createEventDescription"
+                android:inputType="text"
+                android:paddingTop="20dp"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/createEventLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:hint="@string/createEventLocation"
+                android:inputType="textPostalAddress"
+                android:paddingTop="20dp"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/creatingImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/create_event_photo"
+                android:src="@drawable/defaultimage" />
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottom_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:fabAlignmentMode="end"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabCradleMargin="5dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="createEvent"
+        android:src="@drawable/baseline_add_24"
+        app:layout_anchor="@id/bottom_app_bar" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

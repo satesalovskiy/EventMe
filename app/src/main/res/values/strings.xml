@@ -7,4 +7,37 @@
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="btn_link_to_login">Already have an account? Login! </string>
+    <string name="profile_activity">Profile</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="AllEvents">
+        <item>Cambridge</item>
+        <item>Sebastopol</item>
+    </string-array>
+
+
+    <string name="all_tab">All Events</string>
+    <string name="my_tab">My Events</string>
+    <string name="loadImage">Load Image</string>
+    <string name="addDate">Add date</string>
+    <string name="addLocation">Add location</string>
+    <string name="createEventTopic">What the event is?</string>
+    <string name="createEventDescription">Description</string>
+    <string name="createEventLocation">Location</string>
+    <string name="detailsSubscribe">Subscribe</string>
+    <string name="editTextPositiveButton">Confirm</string>
+    <string name="editTextNegativeButton">Cancel</string>
+    <string name="editTextHingName">Name</string>
+    <string name="editTextHingStatus">Status</string>
+    <string name="editTextHingEmail">Email</string>
+    <string name="editTextHingPhone">Phone</string>
+    <string name="push_notifications">Receive push notifications?</string>
+    <string name="your_status">Status</string>
+    <string name="your_email">Email</string>
+    <string name="your_phone_number">Phone number</string>
+    <string name="your_events">All your events: </string>
+    <string name="profile_image_description">Profile image</string>
+    <string name="create_event_photo">Event photo</string>
 </resources>

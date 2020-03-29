@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/load_image"
+        android:icon="@drawable/baseline_add_photo_alternate_white_48"
+        android:orderInCategory="1"
+        android:title="@string/loadImage"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/choose_date"
+        android:icon="@drawable/baseline_date_range_white_48"
+        android:orderInCategory="2"
+        android:title="@string/addDate"
+        app:showAsAction="ifRoom" />
+
+</menu>
